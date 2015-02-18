@@ -24,36 +24,41 @@ import org.jclouds.profitbricks.domain.ProvisioningState;
 import com.google.common.base.Predicate;
 
 /**
- * A custom predicate for waiting until a virtual resource satisfies the given expected status
+ * A custom predicate for waiting until a virtual resource satisfies the given
+ * expected status
  * <p>
- * Performing api requests on a datacenter that is not {@link ProvisioningState#AVAILABLE} is not allowed. On some cases, the API user gets
- * blocked from further requests, and will then need to contact tech support for api lock release.
+ * Performing api requests on a datacenter that is not
+ * {@link ProvisioningState#AVAILABLE} is not allowed. On some cases, the API
+ * user gets blocked from further requests, and will then need to contact tech
+ * support for api lock release.
  */
 public class ProvisioningStatusPollingPredicate implements Predicate<String> {
 
-   private final ProfitBricksApi api;
-   private final ProvisioningStatusAware domain;
-   private final ProvisioningState expect;
+    private final ProfitBricksApi api;
+    private final ProvisioningStatusAware domain;
+    private final ProvisioningState expect;
 
-   public ProvisioningStatusPollingPredicate(ProfitBricksApi api, ProvisioningStatusAware domain, ProvisioningState expect) {
-      this.api = checkNotNull(api, "API null");
-      this.expect = checkNotNull(expect, "Expected state null");
-      this.domain = checkNotNull(domain, "Domain null");
-   }
+    public ProvisioningStatusPollingPredicate(ProfitBricksApi api, ProvisioningStatusAware domain, ProvisioningState expect) {
+        this.api = checkNotNull(api, "API null");
+        this.expect = checkNotNull(expect, "Expected state null");
+        this.domain = checkNotNull(domain, "Domain null");
+    }
 
-   @Override
-   public boolean apply(String input) {
-      checkNotNull(input, "Virtual item id can't be null.");
-      switch (domain) {
-         case DATACENTER:
-            return expect == api.dataCenterApi().getDataCenterState(input);
-         case SERVER:
-            return expect == api.serverApi().getServer(input).state();
-         case STORAGE:
-            return expect == api.storageApi().getStorage(input).state();
-         default:
-            throw new IllegalArgumentException("Unknown domain '" + domain + "'");
-      }
-   }
+    @Override
+    public boolean apply(String input) {
+        checkNotNull(input, "Virtual item id can't be null.");
+        switch (domain) {
+            case DATACENTER:
+                return expect == api.dataCenterApi().getDataCenterState(input);
+            case SERVER:
+                return expect == api.serverApi().getServer(input).state();
+            case STORAGE:
+                return expect == api.storageApi().getStorage(input).state();
+            case SNAPSHOT:
+                return expect == api.snapshotApi().getSnapshot(input).state();
+            default:
+                throw new IllegalArgumentException("Unknown domain '" + domain + "'");
+        }
+    }
 
 }
