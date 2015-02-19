@@ -18,8 +18,8 @@
                     <serverName>server-name</serverName>
                 </balancedServers>
                 <provisioningState>AVAILABLE</provisioningState>
-                <creationTime>2014-12-04T07:09:23.138Z</creationTime>
-                <lastModificationTime>2014-12-04T07:09:23.138Z</lastModificationTime>
+                <creationTime>2014-12-12T03:08:35.629Z</creationTime>
+                <lastModificationTime>2014-12-12T03:08:35.629Z</lastModificationTime>
                 <firewall>
                     <active>false</active>
                     <firewallId>firewall-id</firewallId>

@@ -17,8 +17,8 @@
 package org.jclouds.profitbricks.binder.loadbalancer;
 
 import org.testng.annotations.Test;
-import org.jclouds.profitbricks.domain.LoadBalancer;
-import org.jclouds.profitbricks.domain.LoadBalancerAlgorithm;
+import org.jclouds.profitbricks.domain.Loadbalancer;
+import org.jclouds.profitbricks.domain.LoadbalancerAlgorithm;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -27,9 +27,9 @@ public class CreateLoadBalancerRequestBinderTest {
 
     @Test
     public void testCreatePayload() {
-        CreateLoadBalancerRequestBinder binder = new CreateLoadBalancerRequestBinder();
+        CreateLoadbalancerRequestBinder binder = new CreateLoadbalancerRequestBinder();
 
-        String actual = binder.createPayload(LoadBalancer.Request.CreatePayload.create("datacenter-id", "load-balancer-name", LoadBalancerAlgorithm.ROUND_ROBIN, "-ip", "lan-id", "server-ids"));
+        String actual = binder.createPayload(Loadbalancer.Request.CreatePayload.create("datacenter-id", "load-balancer-name", LoadbalancerAlgorithm.ROUND_ROBIN, "-ip", "lan-id", "server-ids"));
 
         assertNotNull(actual, "Binder returned null payload");
         assertEquals(expectedPayload, actual);
