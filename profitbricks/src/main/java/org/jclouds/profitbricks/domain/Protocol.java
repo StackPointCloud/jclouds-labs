@@ -14,31 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jclouds.profitbricks;
+package org.jclouds.profitbricks.domain;
 
-import java.io.Closeable;
+public enum Protocol {
 
-import org.jclouds.profitbricks.features.DataCenterApi;
-import org.jclouds.profitbricks.features.ImageApi;
-import org.jclouds.profitbricks.features.LoadBalancerApi;
-import org.jclouds.profitbricks.features.ServerApi;
-import org.jclouds.profitbricks.features.StorageApi;
-import org.jclouds.rest.annotations.Delegate;
+    TCP, UDP, ICMP, ANY, UNRECOGNIZED;
 
-public interface ProfitBricksApi extends Closeable {
-
-    @Delegate
-    DataCenterApi dataCenterApi();
-
-    @Delegate
-    ImageApi imageApi();
-
-    @Delegate
-    ServerApi serverApi();
-
-    @Delegate
-    StorageApi storageApi();
-
-    @Delegate
-    LoadBalancerApi loadBalancerApi();
+    public static Protocol fromValue(String value) {
+        try {
+            return valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+        }
+    }
 }
