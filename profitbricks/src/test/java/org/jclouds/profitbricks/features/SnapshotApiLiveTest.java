@@ -83,7 +83,7 @@ public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
       assertEquals(snapshot.id(), snapshotId);
    }
 
-   @Test
+   @Test(dependsOnMethods = "testCreateSnapshot")
    public void testUpdateSnapshot() {
 
       String newName = "new name";
@@ -110,7 +110,7 @@ public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
       assertEquals(snapshot.name(), newName);
    }
 
-   @Test
+   @Test(dependsOnMethods = "testCreateSnapshot")
    public void testRollbackSnapshot() {
       boolean result = api.snapshotApi().rollbackSnapshot(Snapshot.Request.RollbackPayload.create(snapshotId, storageId));
 
