@@ -50,9 +50,9 @@ public class LoadbalancerListResponseHandler extends BaseLoadbalancerResponseHan
         setPropertyOnEndTag(qName);
         
         if (useBalancedServerParser) {
-            balancedServerResponseHandler.endDocument();
+            balancedServerResponseHandler.endElement(uri, localName, qName);
         } else if (useFirewallParser) {
-            firewallResponseHandler.endDocument();
+            firewallResponseHandler.endElement(uri, localName, qName);
         } else {
             if ("return".equals(qName)) {
                 loadBalancers.add(builder
