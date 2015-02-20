@@ -54,22 +54,22 @@ public class LoadbalancerListResponseHandlerTest extends BaseResponseHandlerTest
         DateCodec dateParser = createDateParser().iso8601();
 
         List<Loadbalancer> expected = ImmutableList.<Loadbalancer>of(
-                Loadbalancer.builder().id("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee").loadBalancerAlgorithm(LoadbalancerAlgorithm.ROUND_ROBIN).name("load-1234567890-name")
-                .dataCenterId("datacenter-id").dataCenterVersion("datacenter-version").internetAccess(true).ip("ip").lanId("lan-id").state(ProvisioningState.AVAILABLE).creationTime(dateParser.toDate("2014-12-04T07:09:23.138Z")).lastModificationTime(dateParser.toDate("2014-12-04T07:09:23.138Z"))
-                .firewalls(ImmutableList.<Firewall>of(
-                                Firewall.builder().id("firewall-id").nicId("nic-id").active(false).state(ProvisioningState.AVAILABLE).build()
-                        ))
-                .balancedServers(ImmutableList.<BalancedServer>of(
-                                BalancedServer.builder().activate(true).balancedNicId("balanced-nic-id").serverId("server-id").serverName("server-name").build()
-                        )).build(),
+		Loadbalancer.builder().id("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee").loadBalancerAlgorithm(LoadbalancerAlgorithm.ROUND_ROBIN).name("load-1234567890-name")
+		.dataCenterId("datacenter-id").dataCenterVersion("datacenter-version").internetAccess(true).ip("ip").lanId("lan-id").state(ProvisioningState.AVAILABLE).creationTime(dateParser.toDate("2014-12-04T07:09:23.138Z")).lastModificationTime(dateParser.toDate("2014-12-04T07:09:23.138Z"))
+		.firewalls(ImmutableList.<Firewall>of(
+				Firewall.builder().id("firewall-id").nicId("nic-id").active(false).state(ProvisioningState.AVAILABLE).build()
+			))
+		.balancedServers(ImmutableList.<BalancedServer>of(
+				BalancedServer.builder().activate(true).balancedNicId("balanced-nic-id").serverId("server-id").serverName("server-name").build()
+			)).build(),
 
                 Loadbalancer.builder().id("qqqqqqqq-wwww-rrrr-tttt-yyyyyyyyyyyy").loadBalancerAlgorithm(LoadbalancerAlgorithm.ROUND_ROBIN).name("load-balancer-name")
-                .dataCenterId("datacenter-id").dataCenterVersion("datacenter-version").internetAccess(true).ip("ip").lanId("lan-id").state(ProvisioningState.AVAILABLE).creationTime(dateParser.toDate("2014-12-04T07:09:23.138Z")).lastModificationTime(dateParser.toDate("2014-12-04T07:09:23.138Z"))
+                .dataCenterId("datacenter-id").dataCenterVersion("datacenter-version").internetAccess(false).ip("ip").lanId("lan-id").state(ProvisioningState.AVAILABLE).creationTime(dateParser.toDate("2014-12-04T07:09:23.138Z")).lastModificationTime(dateParser.toDate("2014-12-04T07:09:23.138Z"))
                 .firewalls(ImmutableList.<Firewall>of(
                                 Firewall.builder().id("firewall-id").nicId("nic-id").active(false).state(ProvisioningState.AVAILABLE).build()
                         ))
                 .balancedServers(ImmutableList.<BalancedServer>of(
-                                BalancedServer.builder().activate(true).balancedNicId("balanced-nic-id").serverId("server-id").serverName("server-name").build()
+                                BalancedServer.builder().activate(false).balancedNicId("balanced-nic-id").serverId("server-id").serverName("server-name").build()
                         ))
                 .build()
         );

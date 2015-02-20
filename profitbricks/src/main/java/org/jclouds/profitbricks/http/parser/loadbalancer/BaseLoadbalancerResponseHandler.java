@@ -36,8 +36,8 @@ public abstract class BaseLoadbalancerResponseHandler<T> extends BaseProfitBrick
 
     protected final BalancedServerResponseHandler balancedServerResponseHandler;
     protected final FirewallResponseHandler firewallResponseHandler;
-    protected final List<BalancedServer> balancedServers;
-    protected final List<Firewall> firewalls;
+    protected List<BalancedServer> balancedServers;
+    protected List<Firewall> firewalls;
 
     protected Loadbalancer.Builder builder;
     protected final DateCodec dateCodec;

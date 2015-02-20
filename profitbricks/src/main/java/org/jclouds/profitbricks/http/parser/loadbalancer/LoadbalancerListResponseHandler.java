@@ -47,19 +47,20 @@ public class LoadbalancerListResponseHandler extends BaseLoadbalancerResponseHan
             balancedServers.add(balancedServerResponseHandler.getResult());
         }
 
-        setPropertyOnEndTag(qName);
-        
         if (useBalancedServerParser) {
             balancedServerResponseHandler.endElement(uri, localName, qName);
         } else if (useFirewallParser) {
             firewallResponseHandler.endElement(uri, localName, qName);
         } else {
+	   setPropertyOnEndTag(qName);
             if ("return".equals(qName)) {
                 loadBalancers.add(builder
                         .firewalls(firewalls)
                         .balancedServers(balancedServers)
                         .build());
                 builder = Loadbalancer.builder();
+		firewalls = Lists.newArrayList();
+		balancedServers = Lists.newArrayList();
             }
             clearTextBuffer();
         }
