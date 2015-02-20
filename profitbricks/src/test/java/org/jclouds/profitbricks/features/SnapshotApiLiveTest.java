@@ -75,7 +75,7 @@ public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
       assertTrue(snapshots.size() > 0);
    }
 
-   @Test
+   @Test(dependsOnMethods = "testCreateSnapshot")
    public void testGetSnapshot() {
       Snapshot snapshot = api.snapshotApi().getSnapshot(snapshotId);
 
