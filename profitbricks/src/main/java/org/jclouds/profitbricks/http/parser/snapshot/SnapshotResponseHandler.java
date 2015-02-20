@@ -23,28 +23,26 @@ import org.xml.sax.SAXException;
 
 public class SnapshotResponseHandler extends BaseSnapshotResponseHandler<Snapshot> {
 
-    private boolean done = false;
+   private boolean done = false;
 
-    @Inject
-    SnapshotResponseHandler(DateCodecFactory dateCodec) {
-        super(dateCodec);
-    }
+   @Inject
+   SnapshotResponseHandler(DateCodecFactory dateCodec) {
+      super(dateCodec);
+   }
 
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (done) {
-            return;
-        }
-        setPropertyOnEndTag(qName);
-        if ("return".equals(qName)) {
-            done = true;
-        }
-        clearTextBuffer();
-    }
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      if (done)
+	 return;
+      setPropertyOnEndTag(qName);
+      if ("return".equals(qName))
+	 done = true;
+      clearTextBuffer();
+   }
 
-    @Override
-    public Snapshot getResult() {
-        return builder.build();
-    }
+   @Override
+   public Snapshot getResult() {
+      return builder.build();
+   }
 
 }

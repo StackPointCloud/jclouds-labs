@@ -23,22 +23,22 @@ import static java.lang.String.format;
 
 public class CreateSnapshotRequestBinder extends BaseProfitBricksRequestBinder<Snapshot.Request.CreatePayload> {
 
-    protected final StringBuilder requestBuilder;
+   protected final StringBuilder requestBuilder;
 
-    protected CreateSnapshotRequestBinder() {
-        super("snapshot");
-        this.requestBuilder = new StringBuilder(128);
-    }
+   protected CreateSnapshotRequestBinder() {
+      super("snapshot");
+      this.requestBuilder = new StringBuilder(128);
+   }
 
-    @Override
-    protected String createPayload(Snapshot.Request.CreatePayload payload) {
-        requestBuilder.append("<ws:createSnapshot>")
-                .append("<request>")
-                .append(format("<storageId>%s</storageId>", payload.storageId()))
-                .append(formatIfNotEmpty("<description>%s</description>", payload.description()))
-                .append(formatIfNotEmpty("<snapshotName>%s</snapshotName>", payload.name()))
-                .append("</request>")
-                .append("</ws:createSnapshot>");
-        return requestBuilder.toString();
-    }
+   @Override
+   protected String createPayload(Snapshot.Request.CreatePayload payload) {
+      requestBuilder.append("<ws:createSnapshot>")
+	      .append("<request>")
+	      .append(format("<storageId>%s</storageId>", payload.storageId()))
+	      .append(formatIfNotEmpty("<description>%s</description>", payload.description()))
+	      .append(formatIfNotEmpty("<snapshotName>%s</snapshotName>", payload.name()))
+	      .append("</request>")
+	      .append("</ws:createSnapshot>");
+      return requestBuilder.toString();
+   }
 }

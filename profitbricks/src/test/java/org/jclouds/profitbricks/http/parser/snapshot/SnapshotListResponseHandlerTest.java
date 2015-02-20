@@ -30,70 +30,71 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 
+@Test(groups = "unit", testName = "SnapshotListResponseHandlerTest")
 public class SnapshotListResponseHandlerTest extends BaseResponseHandlerTest<List<Snapshot>> {
 
-    @Override
-    protected ParseSax<List<Snapshot>> createParser() {
-        return factory.create(injector.getInstance(SnapshotListResponseHandler.class));
-    }
+   @Override
+   protected ParseSax<List<Snapshot>> createParser() {
+      return factory.create(injector.getInstance(SnapshotListResponseHandler.class));
+   }
 
-    protected DateCodecFactory createDateParser() {
-        return injector.getInstance(DateCodecFactory.class);
-    }
+   protected DateCodecFactory createDateParser() {
+      return injector.getInstance(DateCodecFactory.class);
+   }
 
-    @Test
-    public void testParseResponseFromGetSnapshot() {
-        ParseSax<List<Snapshot>> parser = createParser();
+   @Test
+   public void testParseResponseFromGetSnapshot() {
+      ParseSax<List<Snapshot>> parser = createParser();
 
-        List<Snapshot> actual = parser.parse(payloadFromResource("/snapshot/snapshots.xml"));
-        assertNotNull(actual);
+      List<Snapshot> actual = parser.parse(payloadFromResource("/snapshot/snapshots.xml"));
+      assertNotNull(actual);
 
-        DateCodec dateParser = createDateParser().iso8601();
+      DateCodec dateParser = createDateParser().iso8601();
 
-        List<Snapshot> expected = Lists.newArrayList();
+      List<Snapshot> expected = Lists.newArrayList();
 
-        expected.add(Snapshot.builder()
-                .id("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
-                .description("description")
-                .size(1024)
-                .name("snapshot01")
-                .state(ProvisioningState.AVAILABLE)
-                .bootable(true)
-                .osType(OsType.LINUX)
-                .cpuHotPlug(true)
-                .cpuHotUnPlug(true)
-                .discVirtioHotPlug(true)
-                .discVirtioHotUnPlug(true)
-                .ramHotPlug(true)
-                .ramHotUnPlug(true)
-                .nicHotPlug(true)
-                .nicHotUnPlug(true)
-                .location(Location.US_LAS)
-                .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .build());
+      expected.add(Snapshot.builder()
+	      .id("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
+	      .description("description")
+	      .size(1024)
+	      .name("snapshot01")
+	      .state(ProvisioningState.AVAILABLE)
+	      .bootable(true)
+	      .osType(OsType.LINUX)
+	      .cpuHotPlug(true)
+	      .cpuHotUnPlug(true)
+	      .discVirtioHotPlug(true)
+	      .discVirtioHotUnPlug(true)
+	      .ramHotPlug(true)
+	      .ramHotUnPlug(true)
+	      .nicHotPlug(true)
+	      .nicHotUnPlug(true)
+	      .location(Location.US_LAS)
+	      .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .build());
 
-        expected.add(Snapshot.builder()
-                .id("qqqqqqqq-wwww-rrrr-tttt-yyyyyyyyyyyy")
-                .description("description")
-                .size(1024)
-                .name("snapshot02")
-                .state(ProvisioningState.AVAILABLE)
-                .bootable(true)
-                .osType(OsType.LINUX)
-                .cpuHotPlug(true)
-                .cpuHotUnPlug(true)
-                .discVirtioHotPlug(true)
-                .discVirtioHotUnPlug(true)
-                .ramHotPlug(true)
-                .ramHotUnPlug(true)
-                .nicHotPlug(true)
-                .nicHotUnPlug(true)
-                .location(Location.US_LAS)
-                .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .build());
+      expected.add(Snapshot.builder()
+	      .id("qqqqqqqq-wwww-rrrr-tttt-yyyyyyyyyyyy")
+	      .description("description")
+	      .size(1024)
+	      .name("snapshot02")
+	      .state(ProvisioningState.AVAILABLE)
+	      .bootable(true)
+	      .osType(OsType.LINUX)
+	      .cpuHotPlug(true)
+	      .cpuHotUnPlug(true)
+	      .discVirtioHotPlug(true)
+	      .discVirtioHotUnPlug(true)
+	      .ramHotPlug(true)
+	      .ramHotUnPlug(true)
+	      .nicHotPlug(true)
+	      .nicHotUnPlug(true)
+	      .location(Location.US_LAS)
+	      .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .build());
 
-        assertEquals(actual, expected);
-    }
+      assertEquals(actual, expected);
+   }
 }

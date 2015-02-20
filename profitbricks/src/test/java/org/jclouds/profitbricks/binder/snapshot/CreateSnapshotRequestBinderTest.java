@@ -14,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package org.jclouds.profitbricks.binder.snapshot;
 
 import org.jclouds.profitbricks.domain.Snapshot;
@@ -26,25 +24,24 @@ import static org.testng.Assert.assertNotNull;
 
 @Test(groups = "unit", testName = "CreateSnapshotRequestBinderTest")
 public class CreateSnapshotRequestBinderTest {
-    @Test
-    public void testCreatePayload() {
-        CreateSnapshotRequestBinder binder = new CreateSnapshotRequestBinder();
 
-        Snapshot.Request.CreatePayload payload = Snapshot.Request.CreatePayload.create("123-1233-1324", "describingthesnapshot", "snapshotname");
+   @Test
+   public void testCreatePayload() {
+      CreateSnapshotRequestBinder binder = new CreateSnapshotRequestBinder();
 
-        String actual = binder.createPayload(payload);
-        assertNotNull(actual, "Binder returned null payload");  
-        assertEquals(expectedPayload, actual);
-    }
+      Snapshot.Request.CreatePayload payload = Snapshot.Request.CreatePayload.create("123-1233-1324", "describingthesnapshot", "snapshotname");
 
-    private final String expectedPayload
-            = ("      <ws:createSnapshot>\n"
-            + "<request>\n"
-            + "<storageId>123-1233-1324</storageId>\n"
-            + "<description>describing the snapshot</description>\n"
-            + "<snapshotName>snapshot name</snapshotName>\n"
-            + "</request>\n"
-            + "</ws:createSnapshot>").replaceAll("\\s+", "");
+      String actual = binder.createPayload(payload);
+      assertNotNull(actual, "Binder returned null payload");
+      assertEquals(expectedPayload, actual);
+   }
+
+   private final String expectedPayload
+	   = ("      <ws:createSnapshot>\n"
+	   + "<request>\n"
+	   + "<storageId>123-1233-1324</storageId>\n"
+	   + "<description>describing the snapshot</description>\n"
+	   + "<snapshotName>snapshot name</snapshotName>\n"
+	   + "</request>\n"
+	   + "</ws:createSnapshot>").replaceAll("\\s+", "");
 }
-
-

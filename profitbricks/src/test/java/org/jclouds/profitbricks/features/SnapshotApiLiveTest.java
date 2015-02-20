@@ -40,93 +40,93 @@ import org.testng.annotations.AfterClass;
 @Test(groups = "live", testName = "SnapshotApiLiveTest", singleThreaded = true)
 public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
 
-    protected Predicate<String> snapshotWaitingPredicate;
-    private String snapshotId;
-    private String storageId;
+   protected Predicate<String> snapshotWaitingPredicate;
+   private String snapshotId;
+   private String storageId;
 
-    @Override
-    protected void initialize() {
-        super.initialize();
+   @Override
+   protected void initialize() {
+      super.initialize();
 
-        initializeWaitPredicate();
+      initializeWaitPredicate();
 
-        List<Storage> storages = api.storageApi().getAllStorages();
-        assertFalse(storages.isEmpty(), "Must atleast have 1 storage available for snapshot testing.");
+      List<Storage> storages = api.storageApi().getAllStorages();
+      assertFalse(storages.isEmpty(), "Must atleast have 1 storage available for snapshot testing.");
 
-        storageId = Iterables.getFirst(storages, null).id();
-    }
+      storageId = Iterables.getFirst(storages, null).id();
+   }
 
-    @Test
-    public void testCreateSnapshot() {
-        Snapshot snapshot = api.snapshotApi().createSnapshot(Snapshot.Request.CreatePayload.create(storageId, "my description", "test snapshot"));
+   @Test
+   public void testCreateSnapshot() {
+      Snapshot snapshot = api.snapshotApi().createSnapshot(Snapshot.Request.CreatePayload.create(storageId, "my description", "test snapshot"));
 
-        assertNotNull(snapshot);
+      assertNotNull(snapshot);
 
-        snapshotWaitingPredicate.apply(snapshot.id());
+      snapshotWaitingPredicate.apply(snapshot.id());
 
-        snapshotId = snapshot.id();
-    }
+      snapshotId = snapshot.id();
+   }
 
-    @Test
-    public void testGetAllSnapshots() {
-        List<Snapshot> snapshots = api.snapshotApi().getAllSnapshots();
+   @Test
+   public void testGetAllSnapshots() {
+      List<Snapshot> snapshots = api.snapshotApi().getAllSnapshots();
 
-        assertNotNull(snapshots);
-        assertTrue(snapshots.size() > 0);
-    }
+      assertNotNull(snapshots);
+      assertTrue(snapshots.size() > 0);
+   }
 
-    @Test
-    public void testGetSnapshot() {
-        Snapshot snapshot = api.snapshotApi().getSnapshot(snapshotId);
+   @Test
+   public void testGetSnapshot() {
+      Snapshot snapshot = api.snapshotApi().getSnapshot(snapshotId);
 
-        assertNotNull(snapshot);
-        assertEquals(snapshot.id(), snapshotId);
-    }
+      assertNotNull(snapshot);
+      assertEquals(snapshot.id(), snapshotId);
+   }
 
-    @Test
-    public void testUpdateSnapshot() {
+   @Test
+   public void testUpdateSnapshot() {
 
-        String newName = "new name";
+      String newName = "new name";
 
-        api.snapshotApi().updateSnapshot(Snapshot.Request.updatingBuilder()
-                .snapshotId(snapshotId)
-                .description("new description")
-                .name(newName)
-                .bootable(true)
-                .osType(OsType.LINUX)
-                .cpuHotplug(true)
-                .cpuHotunplug(true)
-                .discVirtioHotplug(true)
-                .discVirtioHotunplug(true)
-                .nicHotplug(true)
-                .nicHotunplug(true)
-                .ramHotplug(true)
-                .ramHotunplug(true)
-                .build());
+      api.snapshotApi().updateSnapshot(Snapshot.Request.updatingBuilder()
+	      .snapshotId(snapshotId)
+	      .description("new description")
+	      .name(newName)
+	      .bootable(true)
+	      .osType(OsType.LINUX)
+	      .cpuHotplug(true)
+	      .cpuHotunplug(true)
+	      .discVirtioHotplug(true)
+	      .discVirtioHotunplug(true)
+	      .nicHotplug(true)
+	      .nicHotunplug(true)
+	      .ramHotplug(true)
+	      .ramHotunplug(true)
+	      .build());
 
-        Snapshot snapshot = api.snapshotApi().getSnapshot(snapshotId);
+      Snapshot snapshot = api.snapshotApi().getSnapshot(snapshotId);
 
-        assertNotNull(snapshot);
-        assertEquals(snapshot.name(), newName);
-    }
+      assertNotNull(snapshot);
+      assertEquals(snapshot.name(), newName);
+   }
 
-    @Test
-    public void testRollbackSnapshot() {
-        boolean result = api.snapshotApi().rollbackSnapshot(Snapshot.Request.RollbackPayload.create(snapshotId, storageId));
+   @Test
+   public void testRollbackSnapshot() {
+      boolean result = api.snapshotApi().rollbackSnapshot(Snapshot.Request.RollbackPayload.create(snapshotId, storageId));
 
-        assertTrue(result);
-    }
+      assertTrue(result);
+   }
 
-    @AfterClass(alwaysRun = true)
-    public void testDeleteSnapshot() {
-        boolean result = api.snapshotApi().deleteSnapshot(snapshotId);
+   @AfterClass(alwaysRun = true)
+   public void testDeleteSnapshot() {
+      boolean result = api.snapshotApi().deleteSnapshot(snapshotId);
 
-        assertTrue(result);
-    }
+      assertTrue(result);
+   }
 
-    private void initializeWaitPredicate() {
-        this.snapshotWaitingPredicate = Predicates2.retry(
-                new ProvisioningStatusPollingPredicate(api, ProvisioningStatusAware.SNAPSHOT, ProvisioningState.AVAILABLE),
-                2l * 60l, 2l, TimeUnit.SECONDS);
-    }
+   private void initializeWaitPredicate() {
+      this.snapshotWaitingPredicate = Predicates2.retry(
+	      new ProvisioningStatusPollingPredicate(api, ProvisioningStatusAware.SNAPSHOT, ProvisioningState.AVAILABLE),
+	      2l * 60l, 2l, TimeUnit.SECONDS);
+   }
 }

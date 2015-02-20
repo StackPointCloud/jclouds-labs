@@ -27,58 +27,57 @@ import org.jclouds.profitbricks.http.parser.BaseProfitBricksResponseHandler;
 
 public abstract class BaseSnapshotResponseHandler<T> extends BaseProfitBricksResponseHandler<T> {
 
-    protected Snapshot.Builder builder;
+   protected Snapshot.Builder builder;
 
-    protected final DateCodec dateCodec;
+   protected final DateCodec dateCodec;
 
-    BaseSnapshotResponseHandler(DateCodecFactory dateCodec) {
-        this.dateCodec = dateCodec.iso8601();
-        this.builder = Snapshot.builder();
-    }
+   BaseSnapshotResponseHandler(DateCodecFactory dateCodec) {
+      this.dateCodec = dateCodec.iso8601();
+      this.builder = Snapshot.builder();
+   }
 
-    protected final Date textToIso8601Date() {
-        return dateCodec.toDate(textToStringValue());
-    }
+   protected final Date textToIso8601Date() {
+      return dateCodec.toDate(textToStringValue());
+   }
 
-    @Override
-    protected void setPropertyOnEndTag(String qName) {
-        if ("snapshotId".equals(qName)) {
-            builder.id(textToStringValue());
-        } else if ("snapshotName".equals(qName)) {
-            builder.name(textToStringValue());
-        } else if ("snapshotSize".equals(qName)) {
-            builder.size(textToFloatValue());
-        } else if ("osType".equals(qName)) {
-            builder.osType(OsType.fromValue(textToStringValue()));
-        } else if ("location".equals(qName)) {
-            builder.location(Location.fromId(textToStringValue()));
-        } else if ("description".equals(qName)) {
-            builder.description(qName);
-        } else if ("bootable".equals(qName)) {
-            builder.bootable(textToBooleanValue());
-        } else if ("cpuHotPlug".equals(qName)) {
-            builder.cpuHotPlug(textToBooleanValue());
-        } else if ("cpuHotUnPlug".equals(qName)) {
-            builder.cpuHotUnPlug(textToBooleanValue());
-        } else if ("ramHotPlug".equals(qName)) {
-            builder.ramHotPlug(textToBooleanValue());
-        } else if ("ramHotUnPlug".equals(qName)) {
-            builder.ramHotUnPlug(textToBooleanValue());
-        } else if ("nicHotPlug".equals(qName)) {
-            builder.nicHotPlug(textToBooleanValue());
-        } else if ("nicHotUnPlug".equals(qName)) {
-            builder.nicHotUnPlug(textToBooleanValue());
-        } else if ("discVirtioHotPlug".equals(qName)) {
-            builder.discVirtioHotPlug(textToBooleanValue());
-        } else if ("discVirtioHotUnPlug".equals(qName)) {
-            builder.discVirtioHotUnPlug(textToBooleanValue());
-        } else if ("provisioningState".equals(qName)) {
-            builder.state(ProvisioningState.fromValue(textToStringValue()));
-        } else if ("creationTimestamp".equals(qName)) {
-            builder.creationTime(textToIso8601Date());
-        } else if ("modificationTimestamp".equals(qName)) {
-            builder.lastModificationTime(textToIso8601Date());
-        }
-    }
+   @Override
+   protected void setPropertyOnEndTag(String qName) {
+      if ("snapshotId".equals(qName))
+	 builder.id(textToStringValue());
+      else if ("snapshotName".equals(qName))
+	 builder.name(textToStringValue());
+      else if ("snapshotSize".equals(qName))
+	 builder.size(textToFloatValue());
+      else if ("osType".equals(qName))
+	 builder.osType(OsType.fromValue(textToStringValue()));
+      else if ("location".equals(qName))
+	 builder.location(Location.fromId(textToStringValue()));
+      else if ("description".equals(qName))
+	 builder.description(qName);
+      else if ("bootable".equals(qName))
+	 builder.bootable(textToBooleanValue());
+      else if ("cpuHotPlug".equals(qName))
+	 builder.cpuHotPlug(textToBooleanValue());
+      else if ("cpuHotUnPlug".equals(qName))
+	 builder.cpuHotUnPlug(textToBooleanValue());
+      else if ("ramHotPlug".equals(qName))
+	 builder.ramHotPlug(textToBooleanValue());
+      else if ("ramHotUnPlug".equals(qName))
+	 builder.ramHotUnPlug(textToBooleanValue());
+      else if ("nicHotPlug".equals(qName))
+	 builder.nicHotPlug(textToBooleanValue());
+      else if ("nicHotUnPlug".equals(qName))
+	 builder.nicHotUnPlug(textToBooleanValue());
+      else if ("discVirtioHotPlug".equals(qName))
+	 builder.discVirtioHotPlug(textToBooleanValue());
+      else if ("discVirtioHotUnPlug".equals(qName))
+	 builder.discVirtioHotUnPlug(textToBooleanValue());
+      else if ("provisioningState".equals(qName))
+	 builder.state(ProvisioningState.fromValue(textToStringValue()));
+      else if ("creationTimestamp".equals(qName))
+	 builder.creationTime(textToIso8601Date());
+      else if ("modificationTimestamp".equals(qName))
+	 builder.lastModificationTime(textToIso8601Date());
+   }
 
 }

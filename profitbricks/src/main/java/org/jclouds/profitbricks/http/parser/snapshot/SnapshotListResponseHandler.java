@@ -26,27 +26,27 @@ import org.jclouds.date.DateCodecFactory;
 
 public class SnapshotListResponseHandler extends BaseSnapshotResponseHandler<List<Snapshot>> {
 
-    private final List<Snapshot> snapshots;
+   private final List<Snapshot> snapshots;
 
-    @Inject
-    SnapshotListResponseHandler(DateCodecFactory dateCodec) {
-        super(dateCodec);
-        this.snapshots = Lists.newArrayList();
-    }
+   @Inject
+   SnapshotListResponseHandler(DateCodecFactory dateCodec) {
+      super(dateCodec);
+      this.snapshots = Lists.newArrayList();
+   }
 
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        setPropertyOnEndTag(qName);
-        if ("return".equals(qName)) {
-            snapshots.add(builder.build());
-            builder = Snapshot.builder();
-        }
-        clearTextBuffer();
-    }
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      setPropertyOnEndTag(qName);
+      if ("return".equals(qName)) {
+	 snapshots.add(builder.build());
+	 builder = Snapshot.builder();
+      }
+      clearTextBuffer();
+   }
 
-    @Override
-    public List<Snapshot> getResult() {
-        return snapshots;
-    }
+   @Override
+   public List<Snapshot> getResult() {
+      return snapshots;
+   }
 
 }

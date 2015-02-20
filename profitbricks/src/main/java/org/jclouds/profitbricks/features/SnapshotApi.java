@@ -16,7 +16,6 @@
  */
 package org.jclouds.profitbricks.features;
 
-
 import java.util.List;
 
 import javax.inject.Named;
@@ -28,7 +27,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.Fallbacks;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.profitbricks.binder.snapshot.CreateSnapshotRequestBinder;
-import org.jclouds.profitbricks.binder.snapshot.RollbackSnapshotRequestHandler;
+import org.jclouds.profitbricks.binder.snapshot.RollbackSnapshotRequestBinder;
 import org.jclouds.profitbricks.binder.snapshot.UpdateSnapshotRequestBinder;
 import org.jclouds.profitbricks.domain.Snapshot;
 import org.jclouds.profitbricks.http.filters.ProfitBricksSoapMessageEnvelope;
@@ -47,44 +46,41 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 @Produces(MediaType.TEXT_XML)
 public interface SnapshotApi {
 
-    @POST
-    @Named("snapshot:getall")
-    @Payload("<ws:getAllSnapshots/>")
-    @XMLResponseParser(SnapshotListResponseHandler.class)
-    @Fallback(Fallbacks.EmptyListOnNotFoundOr404.class)
-    List<Snapshot> getAllSnapshots();
+   @POST
+   @Named("snapshot:getall")
+   @Payload("<ws:getAllSnapshots/>")
+   @XMLResponseParser(SnapshotListResponseHandler.class)
+   @Fallback(Fallbacks.EmptyListOnNotFoundOr404.class)
+   List<Snapshot> getAllSnapshots();
 
-    @POST
-    @Named("snapshot:get")
-    @Payload("<ws:getSnapshot><snapshotId>{snapshotId}</snapshotId></ws:getSnapshot>")
-    @XMLResponseParser(SnapshotResponseHandler.class)
-    @Fallback(Fallbacks.NullOnNotFoundOr404.class)
-    Snapshot getSnapshot(@PayloadParam("snapshotId") String identifier);
+   @POST
+   @Named("snapshot:get")
+   @Payload("<ws:getSnapshot><snapshotId>{snapshotId}</snapshotId></ws:getSnapshot>")
+   @XMLResponseParser(SnapshotResponseHandler.class)
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   Snapshot getSnapshot(@PayloadParam("snapshotId") String identifier);
 
-    @POST
-    @Named("snapshot:create")
-    @MapBinder(CreateSnapshotRequestBinder.class)
-    @XMLResponseParser(SnapshotResponseHandler.class)
-    Snapshot createSnapshot(@PayloadParam("snapshot") Snapshot.Request.CreatePayload payload);
+   @POST
+   @Named("snapshot:create")
+   @MapBinder(CreateSnapshotRequestBinder.class)
+   @XMLResponseParser(SnapshotResponseHandler.class)
+   Snapshot createSnapshot(@PayloadParam("snapshot") Snapshot.Request.CreatePayload payload);
 
+   @POST
+   @Named("snapshot:update")
+   @MapBinder(UpdateSnapshotRequestBinder.class)
+   @XMLResponseParser(RequestIdOnlyResponseHandler.class)
+   String updateSnapshot(@PayloadParam("snapshot") Snapshot.Request.UpdatePayload payload);
 
-    @POST
-    @Named("snapshot:update")
-    @MapBinder(UpdateSnapshotRequestBinder.class)
-    @XMLResponseParser(RequestIdOnlyResponseHandler.class)
-    String updateSnapshot(@PayloadParam("snapshot") Snapshot.Request.UpdatePayload payload);
+   @POST
+   @Named("snapshot:delete")
+   @Payload("<ws:deleteSnapshot><snapshotId>{id}</snapshotId></ws:deleteSnapshot>")
+   @Fallback(Fallbacks.FalseOnNotFoundOr404.class)
+   boolean deleteSnapshot(@PayloadParam("id") String id);
 
-    @POST
-    @Named( "snapshot:delete" )
-    @Payload( "<ws:deleteSnapshot><snapshotId>{id}</snapshotId></ws:deleteSnapshot>" )
-    @Fallback( Fallbacks.FalseOnNotFoundOr404.class )
-    boolean deleteSnapshot( @PayloadParam( "id" ) String id );
-
-    @POST
-    @Named( "snapshot:rollback" )
-    @MapBinder( RollbackSnapshotRequestHandler.class )
-    @Fallback( Fallbacks.FalseOnNotFoundOr404.class )
-    boolean rollbackSnapshot(@PayloadParam("snapshot") Snapshot.Request.RollbackPayload payload);
+   @POST
+   @Named("snapshot:rollback")
+   @MapBinder(RollbackSnapshotRequestBinder.class)
+   boolean rollbackSnapshot(@PayloadParam("snapshot") Snapshot.Request.RollbackPayload payload);
 
 }
-

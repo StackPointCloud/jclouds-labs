@@ -31,46 +31,46 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "ServerResponseHandlerTest")
 public class SnapshotResponseHandlerTest extends BaseResponseHandlerTest<Snapshot> {
 
-    @Override
-    protected ParseSax<Snapshot> createParser() {
-        return factory.create(injector.getInstance(SnapshotResponseHandler.class));
-    }
+   @Override
+   protected ParseSax<Snapshot> createParser() {
+      return factory.create(injector.getInstance(SnapshotResponseHandler.class));
+   }
 
-    protected DateCodecFactory createDateParser() {
-        return injector.getInstance(DateCodecFactory.class);
-    }
+   protected DateCodecFactory createDateParser() {
+      return injector.getInstance(DateCodecFactory.class);
+   }
 
-    @Test
-    public void testParseResponseFromGetSnapshot() {
-        ParseSax<Snapshot> parser = createParser();
+   @Test
+   public void testParseResponseFromGetSnapshot() {
+      ParseSax<Snapshot> parser = createParser();
 
-        Snapshot actual = parser.parse(payloadFromResource("/snapshot/snapshot.xml"));
-        assertNotNull(actual, "Parsed content returned null");
+      Snapshot actual = parser.parse(payloadFromResource("/snapshot/snapshot.xml"));
+      assertNotNull(actual, "Parsed content returned null");
 
-        DateCodec dateParser = createDateParser().iso8601();
+      DateCodec dateParser = createDateParser().iso8601();
 
-        Snapshot expected = Snapshot.builder()
-                .id("qswdefrg-qaws-qaws-defe-rgrgdsvcxbrh")
-                .description("description")
-                .size(1024)
-                .name("snapshot01")
-                .state(ProvisioningState.AVAILABLE)
-                .bootable(true)
-                .osType(OsType.LINUX)
-                .cpuHotPlug(true)
-                .cpuHotUnPlug(true)
-                .discVirtioHotPlug(true)
-                .discVirtioHotUnPlug(true)
-                .ramHotPlug(true)
-                .ramHotUnPlug(true)
-                .nicHotPlug(true)
-                .nicHotUnPlug(true)
-                .location(Location.US_LAS)
-                .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
-                .build();
+      Snapshot expected = Snapshot.builder()
+	      .id("qswdefrg-qaws-qaws-defe-rgrgdsvcxbrh")
+	      .description("description")
+	      .size(1024)
+	      .name("snapshot01")
+	      .state(ProvisioningState.AVAILABLE)
+	      .bootable(true)
+	      .osType(OsType.LINUX)
+	      .cpuHotPlug(true)
+	      .cpuHotUnPlug(true)
+	      .discVirtioHotPlug(true)
+	      .discVirtioHotUnPlug(true)
+	      .ramHotPlug(true)
+	      .ramHotUnPlug(true)
+	      .nicHotPlug(true)
+	      .nicHotUnPlug(true)
+	      .location(Location.US_LAS)
+	      .creationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .lastModificationTime(dateParser.toDate("2015-01-26T07:09:23.138Z"))
+	      .build();
 
-        assertEquals(actual, expected);
+      assertEquals(actual, expected);
 
-    }
+   }
 }
