@@ -112,9 +112,9 @@ public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshot")
    public void testRollbackSnapshot() {
-      boolean result = api.snapshotApi().rollbackSnapshot(Snapshot.Request.RollbackPayload.create(snapshotId, storageId));
+      String result = api.snapshotApi().rollbackSnapshot(Snapshot.Request.RollbackPayload.create(snapshotId, storageId));
 
-      assertTrue(result);
+      assertNotNull(result);
    }
 
    @AfterClass(alwaysRun = true)

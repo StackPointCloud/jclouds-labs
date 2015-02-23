@@ -248,12 +248,12 @@ public class SnapshotApiMockTest extends BaseProfitBricksMockTest {
 
       String content = "<ws:rollbackSnapshot><request><snapshotId>" + snapshotId + "</snapshotId><storageId>" + storageId + "</storageId></request></ws:rollbackSnapshot>";
       try {
-	 boolean result = api.rollbackSnapshot(Snapshot.Request.rollbackBuilder()
+	 String result = api.rollbackSnapshot(Snapshot.Request.rollbackBuilder()
 		 .snapshotId(snapshotId)
 		 .storageId(storageId)
 		 .build());
 	 assertRequestHasCommonProperties(server.takeRequest(), content);
-	 assertTrue(result);
+	 assertNotNull(result);
       } finally {
 	 pbApi.close();
 	 server.shutdown();

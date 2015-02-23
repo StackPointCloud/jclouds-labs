@@ -81,6 +81,7 @@ public interface SnapshotApi {
    @POST
    @Named("snapshot:rollback")
    @MapBinder(RollbackSnapshotRequestBinder.class)
-   boolean rollbackSnapshot(@PayloadParam("snapshot") Snapshot.Request.RollbackPayload payload);
+   @XMLResponseParser(RequestIdOnlyResponseHandler.class)
+   String rollbackSnapshot(@PayloadParam("snapshot") Snapshot.Request.RollbackPayload payload);
 
 }
