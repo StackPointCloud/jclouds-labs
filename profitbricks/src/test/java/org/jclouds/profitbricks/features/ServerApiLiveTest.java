@@ -56,8 +56,7 @@ public class ServerApiLiveTest extends BaseProfitBricksLiveTest {
 
    @Test
    public void testCreateServer() {
-      String serverId = api.serverApi().createServer(
-              Server.Request.CreatePayload.create(dataCenter.id(), "jclouds-node", 1, 1024));
+      String serverId = api.serverApi().createServer(              Server.Request.CreatePayload.create(dataCenter.id(), "jclouds-node", 1, 1024));
 
       assertNotNull(serverId);
       this.createdServerId = serverId;
