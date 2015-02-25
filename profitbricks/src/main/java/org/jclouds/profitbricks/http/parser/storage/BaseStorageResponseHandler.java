@@ -55,29 +55,29 @@ public abstract class BaseStorageResponseHandler<T> extends BaseProfitBricksResp
 //            <dataCenterId>?</dataCenterId>
 //            <dataCenterVersion>?</dataCenterVersion>
       if ("storageId".equals(qName))
-         builder.id(textToStringValue());
+	 builder.id(textToStringValue());
       else if ("size".equals(qName))
-         builder.size(textToFloatValue());
+	 builder.size(textToFloatValue());
       else if ("storageName".equals(qName))
-         builder.name(textToStringValue());
+	 builder.name(textToStringValue());
       else if ("provisioningState".equals(qName))
-         builder.state(ProvisioningState.fromValue(textToStringValue()));
+	 builder.state(ProvisioningState.fromValue(textToStringValue()));
       else if ("creationTime".equals(qName))
-         builder.creationTime(textToIso8601Date());
+	 builder.creationTime(textToIso8601Date());
       else if ("lastModificationTime".equals(qName))
-         builder.lastModificationTime(textToIso8601Date());
+	 builder.lastModificationTime(textToIso8601Date());
 //            <mountImage>
 //               <imageId>?</imageId>
 //               <imageName>?</imageName>
 //            </mountImage>
       else if ("serverIds".equals(qName))
-         serverIds.add(textToStringValue());
+	 serverIds.add(textToStringValue());
       else if ("bootDevice".equals(qName))
-         builder.bootDevice(textToBooleanValue());
+	 builder.bootDevice(textToBooleanValue());
       else if ("busType".equals(qName))
-         builder.busType(BusType.fromValue(textToStringValue()));
+	 builder.busType(BusType.fromValue(textToStringValue()));
       else if ("deviceNumber".equals(qName))
-         builder.deviceNumber(textToIntValue());
+	 builder.deviceNumber(textToIntValue());
    }
 
 }
