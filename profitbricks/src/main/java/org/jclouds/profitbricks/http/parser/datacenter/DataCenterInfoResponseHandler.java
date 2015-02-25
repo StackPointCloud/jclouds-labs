@@ -44,62 +44,62 @@ public class DataCenterInfoResponseHandler extends BaseDataCenterResponseHandler
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if ("servers".equals(qName))
-	 useServerParser = true;
+         useServerParser = true;
       else if ("storages".equals(qName))
-	 useStorageParser = true;
+         useStorageParser = true;
 
       if (useServerParser)
-	 serverListResponseHandler.startElement(uri, localName, qName, attributes);
+         serverListResponseHandler.startElement(uri, localName, qName, attributes);
       else if (useStorageParser)
-	 storageListResponseHandler.startElement(uri, localName, qName, attributes);
+         storageListResponseHandler.startElement(uri, localName, qName, attributes);
       else
-	 super.startElement(uri, localName, qName, attributes);
+         super.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    protected void setPropertyOnEndTag(String qName) {
       super.setPropertyOnEndTag(qName);
       if ("dataCenterName".equals(qName))
-	 builder.name(textToStringValue());
+         builder.name(textToStringValue());
       else if ("location".equals(qName))
-	 builder.location(Location.fromId(textToStringValue()));
+         builder.location(Location.fromId(textToStringValue()));
       else if ("provisioningState".equals(qName))
-	 builder.state(ProvisioningState.fromValue(textToStringValue()));
+         builder.state(ProvisioningState.fromValue(textToStringValue()));
    }
 
    @Override
    public void characters(char[] ch, int start, int length) {
       if (useServerParser)
-	 serverListResponseHandler.characters(ch, start, length);
+         serverListResponseHandler.characters(ch, start, length);
       else if (useStorageParser)
-	 storageListResponseHandler.characters(ch, start, length);
+         storageListResponseHandler.characters(ch, start, length);
       else
-	 super.characters(ch, start, length);
+         super.characters(ch, start, length);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (done)
-	 return;
+         return;
 
       if (useServerParser)
-	 serverListResponseHandler.endElement(uri, localName, qName);
+         serverListResponseHandler.endElement(uri, localName, qName);
       else if (useStorageParser)
-	 storageListResponseHandler.endElement(uri, localName, qName);
+         storageListResponseHandler.endElement(uri, localName, qName);
       else {
-	 setPropertyOnEndTag(qName);
-	 if ("return".equals(qName)) {
-	    done = true;
-	    builder.servers(serverListResponseHandler.getResult());
-	    builder.storages(storageListResponseHandler.getResult());
-	 }
-	 clearTextBuffer();
+         setPropertyOnEndTag(qName);
+         if ("return".equals(qName)) {
+            done = true;
+            builder.servers(serverListResponseHandler.getResult());
+            builder.storages(storageListResponseHandler.getResult());
+         }
+         clearTextBuffer();
       }
 
       if ("servers".equals(qName))
-	 useServerParser = false;
+         useServerParser = false;
       else if ("storages".equals(qName))
-	 useStorageParser = false;
+         useStorageParser = false;
    }
 
    @Override

@@ -45,24 +45,24 @@ public class FirewallResponseHandlerTest extends BaseResponseHandlerTest<Firewal
       Firewall actual = parser.parse(payloadFromResource("/firewall/firewall.xml"));
       assertNotNull(actual, "Parsed content returned null");
       List<Firewall.Rule> firewallRules = ImmutableList.of(
-	      Firewall.Rule.builder()
-	      .id("firewall-rule-id")
-	      .name("name")
-	      .portRangeEnd(45678)
-	      .portRangeStart(12345)
-	      .protocol(Protocol.TCP)
-	      .sourceIp("192.168.0.1")
-	      .sourceMac("aa:bb:cc:dd:ee:ff")
-	      .targetIp("192.168.0.2")
-	      .build());
+              Firewall.Rule.builder()
+              .id("firewall-rule-id")
+              .name("name")
+              .portRangeEnd(45678)
+              .portRangeStart(12345)
+              .protocol(Protocol.TCP)
+              .sourceIp("192.168.0.1")
+              .sourceMac("aa:bb:cc:dd:ee:ff")
+              .targetIp("192.168.0.2")
+              .build());
 
       Firewall expected = Firewall.builder()
-	      .active(true)
-	      .id("firewall-id")
-	      .nicId("nic-id")
-	      .state(ProvisioningState.AVAILABLE)
-	      .rules(firewallRules)
-	      .build();
+              .active(true)
+              .id("firewall-id")
+              .nicId("nic-id")
+              .state(ProvisioningState.AVAILABLE)
+              .rules(firewallRules)
+              .build();
 
       assertEquals(expected, actual);
 

@@ -33,22 +33,22 @@ public class NicResponseHandler extends BaseNicResponseHandler<Nic> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (done)
-	 return;
+         return;
 
       if (useFirewallParser)
-	 firewallResponseHandler.endElement(uri, localName, qName);
+         firewallResponseHandler.endElement(uri, localName, qName);
       else {
-	 setPropertyOnEndTag(qName);
-	 if ("return".equals(qName)) {
-	    done = true;
-	    builder.firewall(firewallResponseHandler.getResult());
-	    firewallResponseHandler.reset();
-	 }
-	 clearTextBuffer();
+         setPropertyOnEndTag(qName);
+         if ("return".equals(qName)) {
+            done = true;
+            builder.firewall(firewallResponseHandler.getResult());
+            firewallResponseHandler.reset();
+         }
+         clearTextBuffer();
       }
 
       if ("firewall".equals(qName))
-	 useFirewallParser = false;
+         useFirewallParser = false;
    }
 
    @Override

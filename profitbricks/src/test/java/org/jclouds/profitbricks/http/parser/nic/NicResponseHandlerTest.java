@@ -41,25 +41,25 @@ public class NicResponseHandlerTest extends BaseResponseHandlerTest<Nic> {
       assertNotNull(actual, "Parsed content returned null");
 
       Nic expected = Nic.builder()
-	      .id("12345678-abcd-efgh-ijkl-987654321000")
-	      .dataCenterId("0")
-	      .name("name")
-	      .lanId(1)
-	      .internetAccess(true)
-	      .serverId("server-id")
-	      .ip("192.168.0.1")
-	      .macAddress("mac-address")
-	      .dhcpActive(true)
-	      .gatewayIp("gateway-ip")
-	      .state(ProvisioningState.AVAILABLE)
-	      .firewall(
-		      Firewall.builder()
-		      .active(true)
-		      .id("firewall-id")
-		      .nicId("nic-id")
-		      .state(ProvisioningState.AVAILABLE)
-		      .build())
-	      .build();
+              .id("12345678-abcd-efgh-ijkl-987654321000")
+              .dataCenterId("0")
+              .name("name")
+              .lanId(1)
+              .internetAccess(true)
+              .serverId("server-id")
+              .ip("192.168.0.1")
+              .macAddress("mac-address")
+              .dhcpActive(true)
+              .gatewayIp("gateway-ip")
+              .state(ProvisioningState.AVAILABLE)
+              .firewall(
+                      Firewall.builder()
+                      .active(true)
+                      .id("firewall-id")
+                      .nicId("nic-id")
+                      .state(ProvisioningState.AVAILABLE)
+                      .build())
+              .build();
 
       assertEquals(actual, expected);
    }

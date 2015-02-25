@@ -30,34 +30,34 @@ public class ServerInfoResponseHandler extends BaseServerResponseHandler<Server>
 
    @Inject
    ServerInfoResponseHandler(DateCodecFactory dateCodec, StorageListResponseHandler storageListResponseHandler,
-	   NicListResponseHandler nicListResponseHandler) {
+           NicListResponseHandler nicListResponseHandler) {
       super(dateCodec, storageListResponseHandler, nicListResponseHandler);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (done)
-	 return;
+         return;
 
       if (useStorageParser)
-	 storageListResponseHandler.endElement(uri, localName, qName);
+         storageListResponseHandler.endElement(uri, localName, qName);
       else if (useNicParser)
-	 nicListResponseHandler.endElement(uri, localName, qName);
+         nicListResponseHandler.endElement(uri, localName, qName);
       else {
-	 setPropertyOnEndTag(qName);
-	 if ("return".equals(qName)) {
-	    done = true;
-	    builder
-		    .storages(storageListResponseHandler.getResult())
-		    .nics(nicListResponseHandler.getResult());
-	 }
-	 clearTextBuffer();
+         setPropertyOnEndTag(qName);
+         if ("return".equals(qName)) {
+            done = true;
+            builder
+                    .storages(storageListResponseHandler.getResult())
+                    .nics(nicListResponseHandler.getResult());
+         }
+         clearTextBuffer();
       }
 
       if ("connectedStorages".equals(qName))
-	 useStorageParser = false;
+         useStorageParser = false;
       else if ("nics".equals(qName))
-	 useNicParser = false;
+         useNicParser = false;
    }
 
    @Override

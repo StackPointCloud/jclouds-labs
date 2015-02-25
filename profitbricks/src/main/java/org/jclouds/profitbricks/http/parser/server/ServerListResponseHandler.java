@@ -33,7 +33,7 @@ public class ServerListResponseHandler extends BaseServerResponseHandler<List<Se
 
    @Inject
    ServerListResponseHandler(DateCodecFactory dateCodec, StorageListResponseHandler storageListResponseHandler,
-	   NicListResponseHandler nicListResponseHandler) {
+           NicListResponseHandler nicListResponseHandler) {
       super(dateCodec, storageListResponseHandler, nicListResponseHandler);
       this.servers = Lists.newArrayList();
    }
@@ -42,28 +42,28 @@ public class ServerListResponseHandler extends BaseServerResponseHandler<List<Se
    public void endElement(String uri, String localName, String qName) throws SAXException {
 
       if (useStorageParser)
-	 storageListResponseHandler.endElement(uri, localName, qName);
+         storageListResponseHandler.endElement(uri, localName, qName);
       else if (useNicParser)
-	 nicListResponseHandler.endElement(uri, localName, qName);
+         nicListResponseHandler.endElement(uri, localName, qName);
       else {
-	 setPropertyOnEndTag(qName);
-	 if ("return".equals(qName) || "servers".equals(qName)) {
-	    servers.add(builder
-		    .storages(storageListResponseHandler.getResult())
-		    .nics(nicListResponseHandler.getResult())
-		    .build());
-	    storageListResponseHandler.reset();
-	    nicListResponseHandler.reset();
+         setPropertyOnEndTag(qName);
+         if ("return".equals(qName) || "servers".equals(qName)) {
+            servers.add(builder
+                    .storages(storageListResponseHandler.getResult())
+                    .nics(nicListResponseHandler.getResult())
+                    .build());
+            storageListResponseHandler.reset();
+            nicListResponseHandler.reset();
 
-	    builder = Server.builder();
-	 }
-	 clearTextBuffer();
+            builder = Server.builder();
+         }
+         clearTextBuffer();
       }
 
       if ("connectedStorages".equals(qName))
-	 useStorageParser = false;
+         useStorageParser = false;
       else if ("nics".equals(qName))
-	 useNicParser = false;
+         useNicParser = false;
    }
 
    @Override

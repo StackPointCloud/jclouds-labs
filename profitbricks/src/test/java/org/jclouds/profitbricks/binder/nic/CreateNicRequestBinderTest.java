@@ -43,7 +43,7 @@ public class CreateNicRequestBinderTest {
 
    private final String expectedPayload = ("<ws:createNic>\n"
            + "            <request>\n"
-	   + "                <ip>192.168.0.1</ip>\n"
+           + "                <ip>192.168.0.1</ip>\n"
            + "                <nicName>nic-name</nicName>\n"
            + "                <dhcpActive>true</dhcpActive>\n"
            + "                <serverId>server-id</serverId>\n"

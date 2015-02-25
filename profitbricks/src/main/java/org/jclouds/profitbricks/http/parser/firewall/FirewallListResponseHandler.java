@@ -39,21 +39,21 @@ public class FirewallListResponseHandler extends BaseFirewallResponseHandler<Lis
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (useFirewallRuleParser)
-	 firewallRuleListResponseHandler.endElement(uri, localName, qName);
+         firewallRuleListResponseHandler.endElement(uri, localName, qName);
       else {
-	 setPropertyOnEndTag(qName);
-	 if ("return".equals(qName)) {
-	    firewalls.add(builder
-		    .rules(firewallRuleListResponseHandler.getResult())
-		    .build());
-	    firewallRuleListResponseHandler.reset();
-	    builder = Firewall.builder();
-	 }
-	 clearTextBuffer();
+         setPropertyOnEndTag(qName);
+         if ("return".equals(qName)) {
+            firewalls.add(builder
+                    .rules(firewallRuleListResponseHandler.getResult())
+                    .build());
+            firewallRuleListResponseHandler.reset();
+            builder = Firewall.builder();
+         }
+         clearTextBuffer();
       }
 
       if ("firewallRules".equals(qName))
-	 useFirewallRuleParser = false;
+         useFirewallRuleParser = false;
    }
 
    @Override

@@ -45,13 +45,13 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
 
       String content = "<ws:getNic><nicId>" + id + "</nicId></ws:getNic>";
       try {
-	 Nic nic = api.getNic(id);
-	 assertRequestHasCommonProperties(server.takeRequest(), content);
-	 assertNotNull(nic);
-	 assertEquals(nic.id(), id);
+         Nic nic = api.getNic(id);
+         assertRequestHasCommonProperties(server.takeRequest(), content);
+         assertNotNull(nic);
+         assertEquals(nic.id(), id);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -66,12 +66,12 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       String id = "nonexisting-nic-id";
 
       try {
-	 Nic nic = api.getNic(id);
-	 assertRequestHasCommonProperties(server.takeRequest());
-	 assertNull(nic);
+         Nic nic = api.getNic(id);
+         assertRequestHasCommonProperties(server.takeRequest());
+         assertNull(nic);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -83,12 +83,12 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       ProfitBricksApi pbApi = api(server.getUrl(rootUrl));
       NicApi api = pbApi.nicApi();
       try {
-	 List<Nic> nics = api.getAllNics();
-	 assertRequestHasCommonProperties(server.takeRequest(), "<ws:getAllNic/>");
-	 assertNotNull(nics);
+         List<Nic> nics = api.getAllNics();
+         assertRequestHasCommonProperties(server.takeRequest(), "<ws:getAllNic/>");
+         assertNotNull(nics);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -101,31 +101,31 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       NicApi api = pbApi.nicApi();
 
       String content = "<ws:createNic>"
-	      + "<request>"
-	      + "<ip>192.168.0.1</ip>"
-	      + "<nicName>nic-name</nicName>"
-	      + "<dhcpActive>true</dhcpActive>"
-	      + "<serverId>server-id</serverId>"
-	      + "<lanId>1</lanId>"
-	      + "</request>"
-	      + "</ws:createNic>";
+              + "<request>"
+              + "<ip>192.168.0.1</ip>"
+              + "<nicName>nic-name</nicName>"
+              + "<dhcpActive>true</dhcpActive>"
+              + "<serverId>server-id</serverId>"
+              + "<lanId>1</lanId>"
+              + "</request>"
+              + "</ws:createNic>";
 
       try {
-	 Nic nic = api.createNic(
-		 Nic.Request.creatingBuilder()
-		 .ip("192.168.0.1")
-		 .name("nic-name")
-		 .dhcpActive(true)
-		 .lanId(1)
-		 .serverId("server-id")
-		 .build());
+         Nic nic = api.createNic(
+                 Nic.Request.creatingBuilder()
+                 .ip("192.168.0.1")
+                 .name("nic-name")
+                 .dhcpActive(true)
+                 .lanId(1)
+                 .serverId("server-id")
+                 .build());
 
-	 assertRequestHasCommonProperties(server.takeRequest(), content);
-	 assertNotNull(nic.id());
+         assertRequestHasCommonProperties(server.takeRequest(), content);
+         assertNotNull(nic.id());
 
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -138,20 +138,20 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       NicApi api = pbApi.nicApi();
 
       String content = "<ws:updateNic>"
-	      + "<request>"
-	      + "<nicId>nic-id</nicId>"
-	      + "<ip>ip</ip>"
-	      + "<nicName>nic-name</nicName>"
-	      + "<dhcpActive>true</dhcpActive>"
-	      + "<lanId>1</lanId>"
-	      + "</request>"
-	      + "</ws:updateNic>";
+              + "<request>"
+              + "<nicId>nic-id</nicId>"
+              + "<ip>ip</ip>"
+              + "<nicName>nic-name</nicName>"
+              + "<dhcpActive>true</dhcpActive>"
+              + "<lanId>1</lanId>"
+              + "</request>"
+              + "</ws:updateNic>";
       try {
-	 Nic nic = api.updateNic(Nic.Request.UpdatePayload.create("nic-id", "ip", "nic-name", true, 1));
-	 assertRequestHasCommonProperties(server.takeRequest(), content);
+         Nic nic = api.updateNic(Nic.Request.UpdatePayload.create("nic-id", "ip", "nic-name", true, 1));
+         assertRequestHasCommonProperties(server.takeRequest(), content);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -164,16 +164,16 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       NicApi api = pbApi.nicApi();
 
       String content = "<ws:setInternetAccess>"
-	      + "<dataCenterId>datacenter-id</dataCenterId>"
-	      + "<lanId>1</lanId>"
-	      + "<internetAccess>true</internetAccess>"
-	      + "</ws:setInternetAccess>";
+              + "<dataCenterId>datacenter-id</dataCenterId>"
+              + "<lanId>1</lanId>"
+              + "<internetAccess>true</internetAccess>"
+              + "</ws:setInternetAccess>";
       try {
-	 Nic nic = api.setInternetAccess(Nic.Request.SetInternetAccessPayload.create("datacenter-id", 1, true));
-	 assertRequestHasCommonProperties(server.takeRequest(), content);
+         Nic nic = api.setInternetAccess(Nic.Request.SetInternetAccessPayload.create("datacenter-id", 1, true));
+         assertRequestHasCommonProperties(server.takeRequest(), content);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -190,12 +190,12 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       String content = "<ws:deleteNic><nicId>" + id + "</nicId></ws:deleteNic>";
 
       try {
-	 boolean result = api.deleteNic(id);
-	 assertRequestHasCommonProperties(server.takeRequest(), content);
-	 assertTrue(result);
+         boolean result = api.deleteNic(id);
+         assertRequestHasCommonProperties(server.takeRequest(), content);
+         assertTrue(result);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 
@@ -210,12 +210,12 @@ public class NicApiMockTest extends BaseProfitBricksMockTest {
       String id = "nonexisting-nic-id";
 
       try {
-	 boolean result = api.deleteNic(id);
-	 assertRequestHasCommonProperties(server.takeRequest());
-	 assertFalse(result);
+         boolean result = api.deleteNic(id);
+         assertRequestHasCommonProperties(server.takeRequest());
+         assertFalse(result);
       } finally {
-	 pbApi.close();
-	 server.shutdown();
+         pbApi.close();
+         server.shutdown();
       }
    }
 

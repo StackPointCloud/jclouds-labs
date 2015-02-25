@@ -37,11 +37,11 @@ public class StorageListResponseHandler extends BaseStorageResponseHandler<List<
    public void endElement(String uri, String localName, String qName) throws SAXException {
       setPropertyOnEndTag(qName);
       if ("return".equals(qName) || "connectedStorages".equals(qName) || "storages".equals(qName)) {
-	 storages.add(builder
-		 .serverIds(serverIds)
-		 .build());
-	 builder = Storage.builder();
-	 serverIds = Lists.newArrayList();
+         storages.add(builder
+                 .serverIds(serverIds)
+                 .build());
+         builder = Storage.builder();
+         serverIds = Lists.newArrayList();
       }
       clearTextBuffer();
    }

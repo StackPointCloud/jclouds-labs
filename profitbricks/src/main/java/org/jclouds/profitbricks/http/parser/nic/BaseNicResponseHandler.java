@@ -41,42 +41,42 @@ public abstract class BaseNicResponseHandler<T> extends BaseProfitBricksResponse
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if ("firewall".equals(qName))
-	 useFirewallParser = true;
+         useFirewallParser = true;
       if (useFirewallParser)
-	 firewallResponseHandler.startElement(uri, localName, qName, attributes);
+         firewallResponseHandler.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    public void characters(char[] ch, int start, int length) {
       if (useFirewallParser)
-	 firewallResponseHandler.characters(ch, start, length);
+         firewallResponseHandler.characters(ch, start, length);
       else
-	 super.characters(ch, start, length);
+         super.characters(ch, start, length);
    }
 
    @Override
    protected void setPropertyOnEndTag(String qName) {
       if ("dataCenterId".equals(qName))
-	 builder.dataCenterId(textToStringValue());
+         builder.dataCenterId(textToStringValue());
       else if ("nicName".equals(qName))
-	 builder.name(textToStringValue());
+         builder.name(textToStringValue());
       else if ("nicId".equals(qName))
-	 builder.id(textToStringValue());
+         builder.id(textToStringValue());
       else if ("lanId".equals(qName))
-	 builder.lanId(textToIntValue());
+         builder.lanId(textToIntValue());
       else if ("internetAccess".equals(qName))
-	 builder.internetAccess(textToBooleanValue());
+         builder.internetAccess(textToBooleanValue());
       else if ("serverId".equals(qName))
-	 builder.serverId(textToStringValue());
+         builder.serverId(textToStringValue());
       else if ("ips".equals(qName))
-	 builder.ip(textToStringValue());
+         builder.ip(textToStringValue());
       else if ("macAddress".equals(qName))
-	 builder.macAddress(textToStringValue());
+         builder.macAddress(textToStringValue());
       else if ("dhcpActive".equals(qName))
-	 builder.dhcpActive(textToBooleanValue());
+         builder.dhcpActive(textToBooleanValue());
       else if ("gatewayIp".equals(qName))
-	 builder.gatewayIp(textToStringValue());
+         builder.gatewayIp(textToStringValue());
       else if ("provisioningState".equals(qName))
-	 builder.state(ProvisioningState.fromValue(textToStringValue()));
+         builder.state(ProvisioningState.fromValue(textToStringValue()));
    }
 }

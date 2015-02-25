@@ -41,29 +41,29 @@ public abstract class BaseFirewallResponseHandler<T> extends BaseProfitBricksRes
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if ("firewallRules".equals(qName))
-	 useFirewallRuleParser = true;
+         useFirewallRuleParser = true;
 
       if (useFirewallRuleParser)
-	 firewallRuleListResponseHandler.startElement(uri, localName, qName, attributes);
+         firewallRuleListResponseHandler.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    public void characters(char[] ch, int start, int length) {
       if (useFirewallRuleParser)
-	 firewallRuleListResponseHandler.characters(ch, start, length);
+         firewallRuleListResponseHandler.characters(ch, start, length);
       else
-	 super.characters(ch, start, length);
+         super.characters(ch, start, length);
    }
 
    @Override
    protected void setPropertyOnEndTag(String qName) {
       if ("firewallId".equals(qName))
-	 builder.id(textToStringValue());
+         builder.id(textToStringValue());
       else if ("active".equals(qName))
-	 builder.active(textToBooleanValue());
+         builder.active(textToBooleanValue());
       else if ("nicId".equals(qName))
-	 builder.nicId(textToStringValue());
+         builder.nicId(textToStringValue());
       else if ("provisioningState".equals(qName))
-	 builder.state(ProvisioningState.fromValue(textToStringValue()));
+         builder.state(ProvisioningState.fromValue(textToStringValue()));
    }
 }

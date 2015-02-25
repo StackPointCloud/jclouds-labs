@@ -36,7 +36,7 @@ public class FirewallRuleListResponseHandler extends BaseFirewallRuleResponseHan
       setPropertyOnEndTag(qName);
 
       if ("firewallRules".equals(qName))
-	 rules.add(builder.build());
+         rules.add(builder.build());
       clearTextBuffer();
 
    }
