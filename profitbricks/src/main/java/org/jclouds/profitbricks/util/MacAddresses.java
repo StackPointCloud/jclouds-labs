@@ -18,26 +18,16 @@ package org.jclouds.profitbricks.util;
 
 import java.util.regex.Pattern;
 
-/**
- * Additional utility methods that are not yet present {@link org.jclouds.util.Strings2}
- */
-public class Strings3 {
+public class MacAddresses {
 
    private static final String MAC_ADDR_FORMAT = "^([0-9a-f]{2}[:]){5}([0-9a-f]{2})$";
-   private static final String IP_ADDR_FORMAT
-	   = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-	   + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-	   + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-	   + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
    private static final Pattern MAC_ADDR_PATTERN = Pattern.compile(MAC_ADDR_FORMAT);
-   private static final Pattern IP_ADDR_PATTERN = Pattern.compile(IP_ADDR_FORMAT);
 
    public static boolean isMacAddress(String in) {
       return MAC_ADDR_PATTERN.matcher(in).matches();
    }
-
-   public static boolean isIpAddress(String in) {
-      return IP_ADDR_PATTERN.matcher(in).matches(); // not exposed in Strings2
+   
+   public static void main(String[] args) {
+      System.out.println(isMacAddress("AA:BB:CC:DD:EE:FF".toLowerCase()));
    }
-
 }

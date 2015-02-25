@@ -17,8 +17,7 @@
 package org.jclouds.profitbricks.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.profitbricks.util.Strings3.isIpAddress;
-import static org.jclouds.profitbricks.util.Strings3.isMacAddress;
+import static org.jclouds.profitbricks.util.MacAddresses.isMacAddress;
 
 import com.google.auto.value.AutoValue;
 
@@ -30,6 +29,7 @@ import org.jclouds.profitbricks.domain.internal.FirewallRuleCommonProperties;
 import com.google.common.collect.ImmutableList;
 
 import autovalue.shaded.com.google.common.common.collect.Lists;
+import static com.google.common.net.InetAddresses.isInetAddress;
 
 @AutoValue
 public abstract class Firewall {
@@ -39,11 +39,11 @@ public abstract class Firewall {
       TCP, UDP, ICMP, ANY, UNRECOGNIZED;
 
       public static Protocol fromValue(String value) {
-	 try {
-	    return valueOf(value);
-	 } catch (IllegalArgumentException e) {
-	    return UNRECOGNIZED;
-	 }
+         try {
+            return valueOf(value);
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -62,9 +62,9 @@ public abstract class Firewall {
    public abstract List<Rule> rules();
 
    public static Firewall create(String id, String nicId, boolean active, ProvisioningState provisioningState,
-	   List<Rule> rules) {
+           List<Rule> rules) {
       return new AutoValue_Firewall(id, nicId, active, provisioningState,
-	      rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<Rule>of());
+              rules != null ? ImmutableList.copyOf(rules) : ImmutableList.<Rule>of());
    }
 
    public static Builder builder() {
@@ -74,48 +74,48 @@ public abstract class Firewall {
    public static final class Request {
 
       public static AddRulePayload.Builder ruleAddingBuilder() {
-	 return new AddRulePayload.Builder();
+         return new AddRulePayload.Builder();
       }
 
       @AutoValue
       public abstract static class AddRulePayload {
 
-	 public abstract String nicId();
+         public abstract String nicId();
 
-	 public abstract List<RuleWithIcmp> rules();
+         public abstract List<RuleWithIcmp> rules();
 
-	 public static AddRulePayload create(String nicId, List<RuleWithIcmp> rules) {
-	    return new AutoValue_Firewall_Request_AddRulePayload(nicId, rules);
-	 }
+         public static AddRulePayload create(String nicId, List<RuleWithIcmp> rules) {
+            return new AutoValue_Firewall_Request_AddRulePayload(nicId, rules);
+         }
 
-	 public static class Builder {
+         public static class Builder {
 
-	    private String nicId;
-	    private List<RuleWithIcmp> rules = Lists.newArrayList();
+            private String nicId;
+            private List<RuleWithIcmp> rules = Lists.newArrayList();
 
-	    public Builder nicId(String nicId) {
-	       this.nicId = nicId;
-	       return this;
-	    }
+            public Builder nicId(String nicId) {
+               this.nicId = nicId;
+               return this;
+            }
 
-	    public Builder rules(List<RuleWithIcmp> rules) {
-	       this.rules = rules;
-	       return this;
-	    }
+            public Builder rules(List<RuleWithIcmp> rules) {
+               this.rules = rules;
+               return this;
+            }
 
-	    public RuleWithIcmp.Builder newRule() {
-	       return new RuleWithIcmp.Builder(this);
-	    }
+            public RuleWithIcmp.Builder newRule() {
+               return new RuleWithIcmp.Builder(this);
+            }
 
-	    public Builder addRule(RuleWithIcmp rule) {
-	       this.rules.add(rule);
-	       return this;
-	    }
+            public Builder addRule(RuleWithIcmp rule) {
+               this.rules.add(rule);
+               return this;
+            }
 
-	    public AddRulePayload build() {
-	       return AddRulePayload.create(nicId, rules);
-	    }
-	 }
+            public AddRulePayload build() {
+               return AddRulePayload.create(nicId, rules);
+            }
+         }
       }
    }
 
@@ -129,37 +129,37 @@ public abstract class Firewall {
       private List<Rule> rules;
 
       public Builder id(String id) {
-	 this.id = id;
-	 return this;
+         this.id = id;
+         return this;
       }
 
       public Builder nicId(String nicId) {
-	 this.nicId = nicId;
-	 return this;
+         this.nicId = nicId;
+         return this;
       }
 
       public Builder active(boolean active) {
-	 this.active = active;
-	 return this;
+         this.active = active;
+         return this;
       }
 
       public Builder state(ProvisioningState state) {
-	 this.state = state;
-	 return this;
+         this.state = state;
+         return this;
       }
 
       public Builder rules(List<Rule> firewallRules) {
-	 this.rules = firewallRules;
-	 return this;
+         this.rules = firewallRules;
+         return this;
       }
 
       public Builder fromFirewall(Firewall in) {
-	 return this.id(in.id()).nicId(in.nicId()).active(in.active()).state(in.state())
-		 .rules(in.rules());
+         return this.id(in.id()).nicId(in.nicId()).active(in.active()).state(in.state())
+                 .rules(in.rules());
       }
 
       public Firewall build() {
-	 return Firewall.create(id, nicId, active, state, rules);
+         return Firewall.create(id, nicId, active, state, rules);
       }
    }
 
@@ -174,38 +174,38 @@ public abstract class Firewall {
       protected String targetIp;
 
       public B name(String name) {
-	 this.name = name;
-	 return self();
+         this.name = name;
+         return self();
       }
 
       public B portRangeEnd(Integer portRangeEnd) {
-	 this.portRangeEnd = portRangeEnd;
-	 return self();
+         this.portRangeEnd = portRangeEnd;
+         return self();
       }
 
       public B portRangeStart(Integer portRangeStart) {
-	 this.portRangeStart = portRangeStart;
-	 return self();
+         this.portRangeStart = portRangeStart;
+         return self();
       }
 
       public B protocol(Protocol protocol) {
-	 this.protocol = protocol;
-	 return self();
+         this.protocol = protocol;
+         return self();
       }
 
       public B sourceIp(String sourceIp) {
-	 this.sourceIp = sourceIp;
-	 return self();
+         this.sourceIp = sourceIp;
+         return self();
       }
 
       public B sourceMac(String sourceMac) {
-	 this.sourceMac = sourceMac;
-	 return self();
+         this.sourceMac = sourceMac;
+         return self();
       }
 
       public B targetIp(String targetIp) {
-	 this.targetIp = targetIp;
-	 return self();
+         this.targetIp = targetIp;
+         return self();
       }
 
       public abstract B self();
@@ -213,32 +213,31 @@ public abstract class Firewall {
       public abstract D build();
 
       protected void checkPortRange() {
-	 checkArgument((portRangeEnd == null && portRangeStart == null)
-		 || (portRangeEnd != null && portRangeStart != null), "Port range must be both present or null");
-	 if (portRangeEnd != null) {
-	    checkArgument(protocol == Protocol.TCP || protocol == Protocol.UDP, "Port range can only be set for TCP or UDP");
-	    checkArgument(portRangeEnd > portRangeStart, "portRangeEnd must be greater than portRangeStart");
-	    checkArgument(portRangeEnd >= 1 && portRangeEnd <= 65534, "Port range end must be 1 to 65534");
-	    checkArgument(portRangeStart >= 1 && portRangeStart <= 65534, "Port range start must be 1 to 65534");
-	 }
+         checkArgument(!(portRangeEnd == null ^ portRangeStart == null), "Port range must be both present or null");
+         if (portRangeEnd != null) {
+            checkArgument(protocol == Protocol.TCP || protocol == Protocol.UDP, "Port range can only be set for TCP or UDP");
+            checkArgument(portRangeEnd > portRangeStart, "portRangeEnd must be greater than portRangeStart");
+            checkArgument(portRangeEnd >= 1 && portRangeEnd <= 65534, "Port range end must be 1 to 65534");
+            checkArgument(portRangeStart >= 1 && portRangeStart <= 65534, "Port range start must be 1 to 65534");
+         }
       }
 
       protected void checkMac() {
-	 if (sourceMac != null)
-	    checkArgument(isMacAddress(sourceMac), "Source MAC must match pattern 'aa:bb:cc:dd:ee:ff'");
+         if (sourceMac != null)
+            checkArgument(isMacAddress(sourceMac), "Source MAC must match pattern 'aa:bb:cc:dd:ee:ff'");
       }
 
       protected void checkIp() {
-	 if (sourceIp != null)
-	    checkArgument(isIpAddress(sourceIp), "Source IP is invalid");
-	 if (targetIp != null)
-	    checkArgument(isIpAddress(targetIp), "Target IP is invalid");
+         if (sourceIp != null)
+            checkArgument(isInetAddress(sourceIp), "Source IP is invalid");
+         if (targetIp != null)
+            checkArgument(isInetAddress(targetIp), "Target IP is invalid");
       }
 
       protected void checkFields() {
-	 checkMac();
-	 checkPortRange();
-	 checkIp();
+         checkMac();
+         checkPortRange();
+         checkIp();
       }
 
    }
@@ -250,34 +249,34 @@ public abstract class Firewall {
       public abstract String id();
 
       public static Rule create(String id, String name, Integer portRangeEnd, Integer portRangeStart,
-	      Protocol protocol, String sourceIp, String sourceMac, String targetIp) {
-	 return new AutoValue_Firewall_Rule(name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac,
-		 targetIp, id);
+              Protocol protocol, String sourceIp, String sourceMac, String targetIp) {
+         return new AutoValue_Firewall_Rule(name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac,
+                 targetIp, id);
       }
 
       public static Builder builder() {
-	 return new Builder();
+         return new Builder();
       }
 
       public static class Builder extends RuleBuilder<Builder, Rule> {
 
-	 private String id;
+         private String id;
 
-	 public Builder id(String id) {
-	    this.id = id;
-	    return self();
-	 }
+         public Builder id(String id) {
+            this.id = id;
+            return self();
+         }
 
-	 @Override
-	 public Builder self() {
-	    return this;
-	 }
+         @Override
+         public Builder self() {
+            return this;
+         }
 
-	 @Override
-	 public Rule build() {
-	    checkFields();
-	    return Rule.create(id, name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac, targetIp);
-	 }
+         @Override
+         public Rule build() {
+            checkFields();
+            return Rule.create(id, name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac, targetIp);
+         }
 
       }
    }
@@ -292,76 +291,76 @@ public abstract class Firewall {
       public abstract Integer icmpType();
 
       public static RuleWithIcmp create(Integer icmpCode, Integer icmpType, String name, Integer portRangeEnd,
-	      Integer portRangeStart, Protocol protocol, String sourceIp, String sourceMac, String targetIp) {
-	 return new AutoValue_Firewall_RuleWithIcmp(name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac,
-		 targetIp, icmpCode, icmpType);
+              Integer portRangeStart, Protocol protocol, String sourceIp, String sourceMac, String targetIp) {
+         return new AutoValue_Firewall_RuleWithIcmp(name, portRangeEnd, portRangeStart, protocol, sourceIp, sourceMac,
+                 targetIp, icmpCode, icmpType);
       }
 
       public static Builder builder() {
-	 return new Builder();
+         return new Builder();
       }
 
       public static class Builder extends RuleBuilder<Builder, RuleWithIcmp> {
 
-	 private Request.AddRulePayload.Builder parentBuilder;
+         private Request.AddRulePayload.Builder parentBuilder;
 
-	 private Integer icmpCode;
-	 private Integer icmpType;
+         private Integer icmpCode;
+         private Integer icmpType;
 
-	 public Builder() {
+         public Builder() {
 
-	 }
+         }
 
-	 private Builder(Request.AddRulePayload.Builder parentBuilder) {
-	    this.parentBuilder = parentBuilder;
-	 }
+         private Builder(Request.AddRulePayload.Builder parentBuilder) {
+            this.parentBuilder = parentBuilder;
+         }
 
-	 public Builder nextRule() {
-	    this.parentBuilder.addRule(build());
-	    return new Builder(parentBuilder);
-	 }
+         public Builder nextRule() {
+            this.parentBuilder.addRule(build());
+            return new Builder(parentBuilder);
+         }
 
-	 public Request.AddRulePayload.Builder endRule() {
-	    this.parentBuilder.addRule(build());
-	    return parentBuilder;
-	 }
+         public Request.AddRulePayload.Builder endRule() {
+            this.parentBuilder.addRule(build());
+            return parentBuilder;
+         }
 
-	 public Builder icmpCode(Integer icmpCode) {
-	    this.icmpCode = icmpCode;
-	    return this;
-	 }
+         public Builder icmpCode(Integer icmpCode) {
+            this.icmpCode = icmpCode;
+            return this;
+         }
 
-	 public Builder icmpType(Integer icmpType) {
-	    this.icmpType = icmpType;
-	    return this;
-	 }
+         public Builder icmpType(Integer icmpType) {
+            this.icmpType = icmpType;
+            return this;
+         }
 
-	 @Override
-	 public Builder self() {
-	    return this;
-	 }
+         @Override
+         public Builder self() {
+            return this;
+         }
 
-	 @Override
-	 public RuleWithIcmp build() {
-	    checkFields();
-	    return RuleWithIcmp.create(icmpCode, icmpType, name, portRangeEnd, portRangeStart, protocol,
-		    sourceIp, sourceMac, targetIp);
-	 }
+         @Override
+         public RuleWithIcmp build() {
+            checkFields();
+            return RuleWithIcmp.create(icmpCode, icmpType, name, portRangeEnd, portRangeStart, protocol,
+                    sourceIp, sourceMac, targetIp);
+         }
 
-	 @Override
-	 protected void checkFields() {
-	    super.checkFields();
-	    checkIcmp();
-	 }
+         @Override
+         protected void checkFields() {
+            super.checkFields();
+            checkIcmp();
+         }
 
-	 private void checkIcmp() {
-	    if (icmpCode != null)
-	       checkArgument(icmpCode >= 1 && icmpCode <= 254, "ICMP code must be 1 to 254");
-	    if (icmpType != null)
-	       checkArgument(icmpType >= 1 && icmpType <= 254, "ICMP type must be 1 to 254");
-	    if (icmpCode != null || icmpType != null)
-	       checkArgument(protocol == Protocol.ICMP, "ICMP code and types can only be set for ICMP protocol");
-	 }
+         private void checkIcmp() {
+            if (icmpCode != null)
+               checkArgument(icmpCode >= 1 && icmpCode <= 254, "ICMP code must be 1 to 254");
+            if (icmpType != null)
+               checkArgument(icmpType >= 1 && icmpType <= 254, "ICMP type must be 1 to 254");
+            if (icmpCode != null || icmpType != null)
+               checkArgument(protocol == Protocol.ICMP, "ICMP code and types can only be set for ICMP protocol");
+         }
       }
    }
 }
