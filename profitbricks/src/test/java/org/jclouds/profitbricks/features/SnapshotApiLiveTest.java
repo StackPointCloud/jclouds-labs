@@ -67,7 +67,7 @@ public class SnapshotApiLiveTest extends BaseProfitBricksLiveTest {
       snapshotId = snapshot.id();
    }
 
-   @Test
+   @Test(dependsOnMethods = "testCreateSnapshot")
    public void testGetAllSnapshots() {
       List<Snapshot> snapshots = api.snapshotApi().getAllSnapshots();
 
