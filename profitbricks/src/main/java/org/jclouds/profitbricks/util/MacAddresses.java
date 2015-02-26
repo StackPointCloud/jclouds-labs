@@ -26,8 +26,4 @@ public class MacAddresses {
    public static boolean isMacAddress(String in) {
       return MAC_ADDR_PATTERN.matcher(in).matches();
    }
-
-   public static void main(String[] args) {
-      System.out.println(isMacAddress("AA:BB:CC:DD:EE:FF".toLowerCase()));
-   }
 }
