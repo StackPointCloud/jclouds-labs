@@ -24,5 +24,5 @@ package org.jclouds.profitbricks.compute.internal;
  */
 public enum ProvisioningStatusAware {
 
-    DATACENTER, SERVER, STORAGE, SNAPSHOT;
+   DATACENTER, SERVER, STORAGE, NIC;
 }
