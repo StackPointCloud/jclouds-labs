@@ -16,6 +16,7 @@
  */
 package org.apache.jclouds.profitbricks.rest.binder.lan;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Supplier;
 import com.google.inject.Inject;
 import java.net.URI;
@@ -39,6 +40,9 @@ public class CreateLanRequestBinder extends BaseProfitBricksRequestBinder<Lan.Re
    @Override
    protected String createPayload(Lan.Request.CreatePayload payload) {
 
+      checkNotNull(payload, "payload");
+      checkNotNull(payload.dataCenterId(), "dataCenterId");
+      
       dataCenterId = payload.dataCenterId();
       
       Map<String, Object> properties = new HashMap<String, Object>();
