@@ -55,30 +55,14 @@ public class CreateFirewallRuleRequestBinder extends BaseProfitBricksRequestBind
       
       properties.put("protocol",  payload.protocol());
       
-      if (payload.name() != null)
-         properties.put("name", payload.name());
-      
-      if (payload.sourceMac() != null)
-        properties.put("sourceMac", payload.sourceMac());
-
-      if (payload.sourceIp() != null)
-        properties.put("sourceIp", payload.sourceIp());
-
-      if (payload.targetIp() != null)
-        properties.put("targetIp", payload.targetIp());
-
-      if (payload.icmpCode() != null)
-        properties.put("icmpCode", payload.icmpCode());
-
-      if (payload.icmpType() != null)
-        properties.put("icmpType", payload.icmpType());
-
-      if (payload.portRangeStart() != null)
-        properties.put("portRangeStart", payload.portRangeStart());
-
-      if (payload.portRangeEnd() != null)
-        properties.put("portRangeEnd", payload.portRangeEnd());
-      
+      putIfPresent(properties, "name", payload.name());
+      putIfPresent(properties, "sourceMac", payload.sourceMac());
+      putIfPresent(properties, "sourceIp", payload.sourceIp());
+      putIfPresent(properties, "targetIp", payload.targetIp());
+      putIfPresent(properties, "icmpCode", payload.icmpCode());
+      putIfPresent(properties, "portRangeStart", payload.portRangeStart());
+      putIfPresent(properties, "portRangeEnd", payload.portRangeEnd());
+            
       requestBuilder.put("properties", properties);
       
       return jsonBinder.toJson(requestBuilder);

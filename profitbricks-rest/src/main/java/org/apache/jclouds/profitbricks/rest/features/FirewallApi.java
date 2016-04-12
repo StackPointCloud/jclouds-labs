@@ -57,46 +57,46 @@ public interface FirewallApi extends Closeable {
    @GET
    @SelectJson("items")
    @Fallback(EmptyListOnNotFoundOr404.class)
-   List<FirewallRule> getRuleList(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId);
+   List<FirewallRule> list(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId);
 
    @Named("firewallRule:list")
    @GET
    @SelectJson("items")
    @Fallback(EmptyListOnNotFoundOr404.class)
-   List<FirewallRule> getRuleList(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, DepthOptions options);
+   List<FirewallRule> list(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, DepthOptions options);
    
    @Named("firewallRule:get")
    @GET   
    @Path("/{firewallRuleId}")
    @ResponseParser(FirewallApi.FirewallRuleParser.class)
    @Fallback(Fallbacks.NullOnNotFoundOr404.class)
-   FirewallRule getFirewallRule(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId);
+   FirewallRule get(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId);
 
    @Named("firewallRule:get")
    @GET   
    @Path("/{firewallRuleId}")
    @ResponseParser(FirewallApi.FirewallRuleParser.class)
    @Fallback(Fallbacks.NullOnNotFoundOr404.class)
-   FirewallRule getFirewallRule(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId, DepthOptions options);
+   FirewallRule get(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId, DepthOptions options);
    
    @Named("firewallRule:create")
    @POST
    @MapBinder(CreateFirewallRuleRequestBinder.class)
    @ResponseParser(FirewallApi.FirewallRuleParser.class)
-   FirewallRule createFirewallRule(@PayloadParam("firewallRule") FirewallRule.Request.CreatePayload payload);
+   FirewallRule create(@PayloadParam("firewallRule") FirewallRule.Request.CreatePayload payload);
    
    @Named("firewallRule:update")
    @PATCH
    @MapBinder(UpdateFirewallRuleRequestBinder.class)
    @ResponseParser(FirewallApi.FirewallRuleParser.class)
    @Produces("application/vnd.profitbricks.partial-properties+json")
-   FirewallRule updateFirewallRule(@PayloadParam("firewallRule") FirewallRule.Request.UpdatePayload payload);
+   FirewallRule update(@PayloadParam("firewallRule") FirewallRule.Request.UpdatePayload payload);
    
    @Named("firewallRule:delete")
    @DELETE
    @Path("/{firewallRuleId}")
    @Fallback(Fallbacks.VoidOnNotFoundOr404.class)
-   void deleteFirewallRule(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId);
+   void delete(@PathParam("dataCenterId") String dataCenterId, @PathParam("serverId") String serverId, @PathParam("nicId") String nicId, @PathParam("firewallRuleId") String firewallRuleId);
    
    static final class FirewallRuleParser extends ParseJson<FirewallRule> {
       

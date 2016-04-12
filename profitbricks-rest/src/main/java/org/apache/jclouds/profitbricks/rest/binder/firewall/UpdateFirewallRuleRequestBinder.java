@@ -52,30 +52,15 @@ public class UpdateFirewallRuleRequestBinder extends BaseProfitBricksRequestBind
       nicId = payload.nicId();
       id = payload.id();
       
-      if (payload.name() != null)
-         requestBuilder.put("name", payload.name());
+      putIfPresent(requestBuilder, "name", payload.name());
+      putIfPresent(requestBuilder, "sourceMac", payload.sourceMac());
+      putIfPresent(requestBuilder, "sourceIp", payload.sourceIp());
+      putIfPresent(requestBuilder, "targetIp", payload.targetIp());
+      putIfPresent(requestBuilder, "icmpCode", payload.icmpCode());
+      putIfPresent(requestBuilder, "icmpType", payload.icmpType());
+      putIfPresent(requestBuilder, "portRangeStart", payload.portRangeStart());
+      putIfPresent(requestBuilder, "portRangeEnd", payload.portRangeEnd());
       
-      if (payload.sourceMac() != null)
-        requestBuilder.put("sourceMac", payload.sourceMac());
-
-      if (payload.sourceIp() != null)
-        requestBuilder.put("sourceIp", payload.sourceIp());
-
-      if (payload.targetIp() != null)
-        requestBuilder.put("targetIp", payload.targetIp());
-
-      if (payload.icmpCode() != null)
-        requestBuilder.put("icmpCode", payload.icmpCode());
-
-      if (payload.icmpType() != null)
-        requestBuilder.put("icmpType", payload.icmpType());
-
-      if (payload.portRangeStart() != null)
-        requestBuilder.put("portRangeStart", payload.portRangeStart());
-
-      if (payload.portRangeEnd() != null)
-        requestBuilder.put("portRangeEnd", payload.portRangeEnd());
-
       return jsonBinder.toJson(requestBuilder);
    }
 

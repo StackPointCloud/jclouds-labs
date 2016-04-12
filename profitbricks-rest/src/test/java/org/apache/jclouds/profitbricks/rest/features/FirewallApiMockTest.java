@@ -30,12 +30,12 @@ import static org.testng.Assert.assertTrue;
 public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
    
    @Test
-   public void testGeRuletList() throws InterruptedException {
+   public void testGeRuleList() throws InterruptedException {
       server.enqueue(
          new MockResponse().setBody(stringFromResource("/firewall/list.json"))
       );
       
-      List<FirewallRule> list = firewallApi().getRuleList("datacenter-id", "server-id", "nic-id");
+      List<FirewallRule> list = firewallApi().list("datacenter-id", "server-id", "nic-id");
       
       assertNotNull(list);
       assertEquals(list.size(), 1);
@@ -46,9 +46,25 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
    }
    
    @Test
+   public void testGeRuleListWithDepth() throws InterruptedException {
+      server.enqueue(
+         new MockResponse().setBody(stringFromResource("/firewall/list.json"))
+      );
+      
+      List<FirewallRule> list = firewallApi().list("datacenter-id", "server-id", "nic-id", new DepthOptions().depth(3));
+      
+      assertNotNull(list);
+      assertEquals(list.size(), 1);
+      assertEquals(list.get(0).properties().name(), "apache-firewall");
+      
+      assertEquals(server.getRequestCount(), 1);
+      assertSent(server, "GET", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules?depth=3");
+   }
+   
+   @Test
    public void testGetRuleListWith404() throws InterruptedException {
       server.enqueue(response404());
-      List<FirewallRule> list = firewallApi().getRuleList("datacenter-id", "server-id", "nic-id", new DepthOptions().depth(1));
+      List<FirewallRule> list = firewallApi().list("datacenter-id", "server-id", "nic-id", new DepthOptions().depth(1));
       assertTrue(list.isEmpty());
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "GET", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules?depth=1");
@@ -62,7 +78,7 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
       
       server.enqueue(response);
       
-      FirewallRule firewallRule = firewallApi().getFirewallRule("datacenter-id", "server-id", "nic-id", "some-id");
+      FirewallRule firewallRule = firewallApi().get("datacenter-id", "server-id", "nic-id", "some-id");
       
       assertNotNull(firewallRule);
       assertEquals(firewallRule.properties().name(), "apache-firewall");
@@ -71,10 +87,26 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
       assertSent(server, "GET", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules/some-id");
    }
    
+   public void testGetFirewallRuleWithDepth() throws InterruptedException {
+      MockResponse response = new MockResponse();
+      response.setBody(stringFromResource("/firewall/get.json"));
+      response.setHeader("Content-Type", "application/vnd.profitbricks.resource+json");
+      
+      server.enqueue(response);
+      
+      FirewallRule firewallRule = firewallApi().get("datacenter-id", "server-id", "nic-id", "some-id", new DepthOptions().depth(3));
+      
+      assertNotNull(firewallRule);
+      assertEquals(firewallRule.properties().name(), "apache-firewall");
+      
+      assertEquals(server.getRequestCount(), 1);
+      assertSent(server, "GET", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules/some-id?depth=3");
+   }
+   
    public void testGetFirewallRuleWith404() throws InterruptedException {
       server.enqueue(response404());
 
-      FirewallRule firewallRule = firewallApi().getFirewallRule("datacenter-id", "server-id", "nic-id", "some-id");
+      FirewallRule firewallRule = firewallApi().get("datacenter-id", "server-id", "nic-id", "some-id");
       
       assertEquals(firewallRule, null);
 
@@ -88,7 +120,7 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
          new MockResponse().setBody(stringFromResource("/firewall/get.json"))
       );
       
-      FirewallRule firewallRule = firewallApi().createFirewallRule(
+      FirewallRule firewallRule = firewallApi().create(
               FirewallRule.Request.creatingBuilder()
               .dataCenterId("datacenter-id")
               .serverId("server-id")
@@ -114,7 +146,7 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
          new MockResponse().setBody(stringFromResource("/firewall/get.json"))
       );
       
-      api.firewallApi().updateFirewallRule(
+      api.firewallApi().update(
               FirewallRule.Request.updatingBuilder()
               .id("some-id")
               .dataCenterId("datacenter-id")
@@ -133,7 +165,7 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
          new MockResponse().setBody("")
       );
       
-      firewallApi().deleteFirewallRule("datacenter-id", "server-id", "nic-id", "some-id");
+      firewallApi().delete("datacenter-id", "server-id", "nic-id", "some-id");
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "DELETE", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules/some-id");
    }
@@ -142,7 +174,7 @@ public class FirewallApiMockTest extends BaseProfitBricksApiMockTest {
    public void testDeleteRuleWith404() throws InterruptedException {
       server.enqueue(response404());
 
-      firewallApi().deleteFirewallRule("datacenter-id", "server-id", "nic-id", "some-id");
+      firewallApi().delete("datacenter-id", "server-id", "nic-id", "some-id");
       
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "DELETE", "/datacenters/datacenter-id/servers/server-id/nics/nic-id/firewallrules/some-id");

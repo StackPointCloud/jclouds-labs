@@ -17,6 +17,7 @@
 package org.apache.jclouds.profitbricks.rest.features;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import java.util.List;
 import org.apache.jclouds.profitbricks.rest.domain.DataCenter;
 import org.apache.jclouds.profitbricks.rest.domain.State;
@@ -31,14 +32,15 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 @Test(groups = "live", testName = "FirewallApiLiveTest")
 public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
    
-   DataCenter dataCenter;
-   Server testServer;
-   Nic testNic;
-   FirewallRule testFirewallRule;
+   private DataCenter dataCenter;
+   private Server testServer;
+   private Nic testNic;
+   private FirewallRule testFirewallRule;
   
    @BeforeClass
    public void setupTest() {
@@ -76,7 +78,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
    public void testCreateFirewallRule() {
       assertNotNull(dataCenter);
             
-      testFirewallRule = firewallApi().createFirewallRule(
+      testFirewallRule = firewallApi().create(
               FirewallRule.Request.creatingBuilder()
               .dataCenterId(dataCenter.id())
               .serverId(testServer.id())
@@ -95,7 +97,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
 
    @Test(dependsOnMethods = "testCreateFirewallRule")
    public void testGetFirewallRule() {
-      FirewallRule firewallRule = firewallApi().getFirewallRule(dataCenter.id(), testServer.id(), testNic.id(), testFirewallRule.id());
+      FirewallRule firewallRule = firewallApi().get(dataCenter.id(), testServer.id(), testNic.id(), testFirewallRule.id());
 
       assertNotNull(firewallRule);
       assertEquals(firewallRule.id(), testFirewallRule.id());
@@ -103,18 +105,22 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
 
    @Test(dependsOnMethods = "testCreateFirewallRule")
    public void testListRules() {
-      List<FirewallRule> firewalls = firewallApi().getRuleList(dataCenter.id(), testServer.id(), testNic.id());
+      List<FirewallRule> firewalls = firewallApi().list(dataCenter.id(), testServer.id(), testNic.id());
 
       assertNotNull(firewalls);
       assertFalse(firewalls.isEmpty());
-      assertEquals(firewalls.size(), 1);
+      assertTrue(Iterables.any(firewalls, new Predicate<FirewallRule>() {
+         @Override public boolean apply(FirewallRule input) {
+            return input.id().equals(testFirewallRule.id());
+         }
+      }));
    }
    
-   @Test(dependsOnMethods = "testGetFirewallRule")
+   @Test(dependsOnMethods = "testCreateFirewallRule")
    public void testUpdateFirewallRule() {
       assertDataCenterAvailable(dataCenter);
       
-      firewallApi().updateFirewallRule(FirewallRule.Request.updatingBuilder()
+      firewallApi().update(FirewallRule.Request.updatingBuilder()
               .dataCenterId(testFirewallRule.dataCenterId())
               .serverId(testServer.id())
               .nicId(testNic.id())
@@ -124,7 +130,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
 
       assertFirewallRuleAvailable(testFirewallRule);
       
-      FirewallRule firewallRule = firewallApi().getFirewallRule(dataCenter.id(), testServer.id(), testNic.id(), testFirewallRule.id());
+      FirewallRule firewallRule = firewallApi().get(dataCenter.id(), testServer.id(), testNic.id(), testFirewallRule.id());
       
       assertEquals(firewallRule.properties().name(), "apache-firewall");
    }
@@ -132,7 +138,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
 
    @Test(dependsOnMethods = "testUpdateFirewallRule")
    public void testDeleteFirewallRule() {
-      firewallApi().deleteFirewallRule(testFirewallRule.dataCenterId(), testServer.id(), testNic.id(), testFirewallRule.id());
+      firewallApi().delete(testFirewallRule.dataCenterId(), testServer.id(), testNic.id(), testFirewallRule.id());
       assertFirewallRuleRemoved(testFirewallRule);
    } 
    
@@ -140,7 +146,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
       assertPredicate(new Predicate<FirewallRule>() {
          @Override
          public boolean apply(FirewallRule testRule) {
-            FirewallRule firewallRule = firewallApi().getFirewallRule(testRule.dataCenterId(), testRule.serverId(), testRule.nicId(), testRule.id());
+            FirewallRule firewallRule = firewallApi().get(testRule.dataCenterId(), testRule.serverId(), testRule.nicId(), testRule.id());
             
             if (firewallRule == null || firewallRule.metadata() == null)
                return false;
@@ -154,7 +160,7 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
       assertPredicate(new Predicate<FirewallRule>() {
          @Override
          public boolean apply(FirewallRule testRule) {
-            return firewallApi().getFirewallRule(testRule.dataCenterId(), testRule.serverId(), testRule.nicId(), testRule.id()) == null;
+            return firewallApi().get(testRule.dataCenterId(), testRule.serverId(), testRule.nicId(), testRule.id()) == null;
          }
       }, firewallRule);
    }
@@ -162,20 +168,6 @@ public class FirewallApiLiveTest extends BaseProfitBricksLiveTest {
    private FirewallApi firewallApi() {
       return api.firewallApi();
    }   
-
-   private void assertNicAvailable(Nic nic) {
-      assertPredicate(new Predicate<Nic>() {
-         @Override
-         public boolean apply(Nic testNic) {
-            Nic nic = nicApi().get(testNic.dataCenterId(), testNic.serverId(), testNic.id());
-            
-            if (nic == null || nic.metadata() == null)
-               return false;
-            
-            return nic.metadata().state() == State.AVAILABLE;
-         }
-      }, nic);
-   }
            
    private NicApi nicApi() {
       return api.nicApi();
