@@ -83,12 +83,11 @@ public abstract class FirewallRule {
         @Nullable
         public abstract String icmpType();
 
-        public abstract Integer portRangeStart();
-
-        public abstract Integer portRangeEnd();
+        public abstract int portRangeStart();
+        public abstract int portRangeEnd();
 
         @SerializedNames({"name", "protocol", "sourceMac", "sourceIp", "targetIp", "icmpCode", "icmpType", "portRangeStart", "portRangeEnd"})
-        public static Properties create(String name, Protocol protocol, String sourceMac, String sourceIp, String targetIp, String icmpCode, String icmpType, Integer portRangeStart, Integer portRangeEnd) {
+        public static Properties create(String name, Protocol protocol, String sourceMac, String sourceIp, String targetIp, String icmpCode, String icmpType, int portRangeStart, int portRangeEnd) {
             return new AutoValue_FirewallRule_Properties(name, protocol, sourceMac, sourceIp, targetIp, icmpCode, icmpType, portRangeStart, portRangeEnd);
         }
     }
