@@ -16,125 +16,125 @@
  */
 package org.apache.jclouds.profitbricks.rest.util;
 
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Predicate;
+import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import java.util.concurrent.TimeUnit;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import org.apache.jclouds.profitbricks.rest.ProfitBricksApi;
+import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.POLL_MAX_PERIOD;
 import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.POLL_PERIOD;
 import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.POLL_PREDICATE_DATACENTER;
 import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.POLL_TIMEOUT;
 import org.apache.jclouds.profitbricks.rest.domain.ProvisioningState;
 import org.apache.jclouds.profitbricks.rest.domain.Server;
-import com.google.inject.AbstractModule;
-import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.POLL_MAX_PERIOD;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.TIMEOUT_NODE_RUNNING;
-import static org.apache.jclouds.profitbricks.rest.config.ProfitBricksComputeProperties.TIMEOUT_NODE_SUSPENDED;
 import org.apache.jclouds.profitbricks.rest.ids.ServerRef;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_RUNNING;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import static org.jclouds.util.Predicates2.retry;
 
 public class ApiPredicatesModule extends AbstractModule {
 
-   @Override
-   protected void configure() {}
+    @Override
+    protected void configure() {
+    }
 
-   @Provides
-   @Singleton
-   @Named(POLL_PREDICATE_DATACENTER)
-   Predicate<String> provideDataCenterAvailablePredicate(final ProfitBricksApi api, ComputeConstants constants) {
-      return retry(new DataCenterProvisioningStatePredicate(
-              api, ProvisioningState.AVAILABLE),
-              constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
-   }
+    @Provides
+    @Singleton
+    @Named(POLL_PREDICATE_DATACENTER)
+    Predicate<String> provideDataCenterAvailablePredicate(final ProfitBricksApi api, ComputeConstants constants) {
+        return retry(new DataCenterProvisioningStatePredicate(
+                api, ProvisioningState.AVAILABLE),
+                constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
+    }
 
-   @Provides
-   @Named(TIMEOUT_NODE_RUNNING)
-   Predicate<ServerRef> provideServerRunningPredicate(final ProfitBricksApi api, ComputeConstants constants) {
-      return retry(new ServerStatusPredicate(
-              api, Server.Status.RUNNING),
-              constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
-   }
-   
-   @Provides
-   @Named(TIMEOUT_NODE_SUSPENDED)
-   Predicate<ServerRef> provideServerSuspendedPredicate(final ProfitBricksApi api, ComputeConstants constants) {
-      return retry(new ServerStatusPredicate(
-              api, Server.Status.SHUTOFF),
-              constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
-   }
-   
-   static class DataCenterProvisioningStatePredicate implements Predicate<String> {
+    @Provides
+    @Named(TIMEOUT_NODE_RUNNING)
+    Predicate<ServerRef> provideServerRunningPredicate(final ProfitBricksApi api, ComputeConstants constants) {
+        return retry(new ServerStatusPredicate(
+                api, Server.Status.RUNNING),
+                constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
+    }
 
-      private final ProfitBricksApi api;
-      private final ProvisioningState expectedState;
+    @Provides
+    @Named(TIMEOUT_NODE_SUSPENDED)
+    Predicate<ServerRef> provideServerSuspendedPredicate(final ProfitBricksApi api, ComputeConstants constants) {
+        return retry(new ServerStatusPredicate(
+                api, Server.Status.SHUTOFF),
+                constants.pollTimeout(), constants.pollPeriod(), constants.pollMaxPeriod(), TimeUnit.SECONDS);
+    }
 
-      public DataCenterProvisioningStatePredicate(ProfitBricksApi api, ProvisioningState expectedState) {
-         this.api = checkNotNull(api, "api must not be null");
-         this.expectedState = checkNotNull(expectedState, "expectedState must not be null");
-      }
+    static class DataCenterProvisioningStatePredicate implements Predicate<String> {
 
-      @Override
-      public boolean apply(String input) {
-         checkNotNull(input, "datacenter id");
-         return api.dataCenterApi().getDataCenter(input).metadata().state().toString().equals(expectedState.toString());
-      }
+        private final ProfitBricksApi api;
+        private final ProvisioningState expectedState;
 
-   }
+        public DataCenterProvisioningStatePredicate(ProfitBricksApi api, ProvisioningState expectedState) {
+            this.api = checkNotNull(api, "api must not be null");
+            this.expectedState = checkNotNull(expectedState, "expectedState must not be null");
+        }
 
-   static class ServerStatusPredicate implements Predicate<ServerRef> {
+        @Override
+        public boolean apply(String input) {
+            checkNotNull(input, "datacenter id");
+            return api.dataCenterApi().getDataCenter(input).metadata().state().toString().equals(expectedState.toString());
+        }
 
-      private final ProfitBricksApi api;
-      private final Server.Status expectedStatus;
+    }
 
-      public ServerStatusPredicate(ProfitBricksApi api, Server.Status expectedStatus) {
-         this.api = checkNotNull(api, "api must not be null");
-         this.expectedStatus = checkNotNull(expectedStatus, "expectedStatus must not be null");
-      }
+    static class ServerStatusPredicate implements Predicate<ServerRef> {
 
-      @Override
-      public boolean apply(ServerRef serverRef) {
-         checkNotNull(serverRef, "serverRef");
-         
-         Server server = api.serverApi().getServer(serverRef.dataCenterId(), serverRef.serverId());
-         
-         if (server == null || server.properties().vmState() == null)
-            return false;
-         
-         return server.properties().vmState() == expectedStatus;
-      }
+        private final ProfitBricksApi api;
+        private final Server.Status expectedStatus;
 
-   }
+        public ServerStatusPredicate(ProfitBricksApi api, Server.Status expectedStatus) {
+            this.api = checkNotNull(api, "api must not be null");
+            this.expectedStatus = checkNotNull(expectedStatus, "expectedStatus must not be null");
+        }
 
-   @Singleton
-   public static class ComputeConstants {
+        @Override
+        public boolean apply(ServerRef serverRef) {
+            checkNotNull(serverRef, "serverRef");
 
-      @Inject
-      @Named(POLL_TIMEOUT)
-      private String pollTimeout;
+            Server server = api.serverApi().getServer(serverRef.dataCenterId(), serverRef.serverId());
 
-      @Inject
-      @Named(POLL_PERIOD)
-      private String pollPeriod;
+            if (server == null || server.properties().vmState() == null) {
+                return false;
+            }
 
-      @Inject
-      @Named(POLL_MAX_PERIOD)
-      private String pollMaxPeriod;
+            return server.properties().vmState() == expectedStatus;
+        }
 
-      public long pollTimeout() {
-         return Long.parseLong(pollTimeout);
-      }
+    }
 
-      public long pollPeriod() {
-         return Long.parseLong(pollPeriod);
-      }
+    @Singleton
+    public static class ComputeConstants {
 
-      public long pollMaxPeriod() {
-         return Long.parseLong(pollMaxPeriod);
-      }
-   }
+        @Inject
+        @Named(POLL_TIMEOUT)
+        private String pollTimeout;
+
+        @Inject
+        @Named(POLL_PERIOD)
+        private String pollPeriod;
+
+        @Inject
+        @Named(POLL_MAX_PERIOD)
+        private String pollMaxPeriod;
+
+        public long pollTimeout() {
+            return Long.parseLong(pollTimeout);
+        }
+
+        public long pollPeriod() {
+            return Long.parseLong(pollPeriod);
+        }
+
+        public long pollMaxPeriod() {
+            return Long.parseLong(pollMaxPeriod);
+        }
+    }
 }

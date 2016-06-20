@@ -36,71 +36,71 @@ import org.jclouds.providers.internal.BaseProviderMetadata;
 @AutoService(ProviderMetadata.class)
 public class ProfitBricksProviderMetadata extends BaseProviderMetadata {
 
-   public static Builder builder() {
-      return new Builder();
-   }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-   @Override
-   public Builder toBuilder() {
-      return builder().fromProviderMetadata(this);
-   }
+    @Override
+    public Builder toBuilder() {
+        return builder().fromProviderMetadata(this);
+    }
 
-   public ProfitBricksProviderMetadata() {
-      super(builder());
-   }
+    public ProfitBricksProviderMetadata() {
+        super(builder());
+    }
 
-   public ProfitBricksProviderMetadata(Builder builder) {
-      super(builder);
-   }
+    public ProfitBricksProviderMetadata(Builder builder) {
+        super(builder);
+    }
 
-   public static Properties defaultProperties() {
-      Properties properties = ProfitBricksApiMetadata.defaultProperties();
-            
-      properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV,DE-HE,DE-BW");
+    public static Properties defaultProperties() {
+        Properties properties = ProfitBricksApiMetadata.defaultProperties();
 
-      properties.setProperty(PROPERTY_REGIONS, "DE,US");
-      properties.setProperty(PROPERTY_REGION + ".DE.zones", "FKB,FRA");
-      properties.setProperty(PROPERTY_REGION + ".US.zones", "LAS,LASDEV");
+        properties.setProperty(PROPERTY_ISO3166_CODES, "US-NV,DE-HE,DE-BW");
 
-      properties.setProperty(PROPERTY_ZONES, "FKB,FRA,LAS,LASDEV");
-      properties.setProperty(PROPERTY_ZONE + ".FKB." + ISO3166_CODES, "DE-BW");
-      properties.setProperty(PROPERTY_ZONE + ".FRA." + ISO3166_CODES, "DE-HE");
-      properties.setProperty(PROPERTY_ZONE + ".LAS." + ISO3166_CODES, "US-NV");
-      properties.setProperty(PROPERTY_ZONE + ".LASDEV." + ISO3166_CODES, "US-NV");
-      
-      long defaultTimeout = 60l * 60l; // 1 hour
-      properties.put(POLL_TIMEOUT, defaultTimeout);
-      properties.put(POLL_PERIOD, 2l);
-      properties.put(POLL_MAX_PERIOD, 2l * 10l);
+        properties.setProperty(PROPERTY_REGIONS, "DE,US");
+        properties.setProperty(PROPERTY_REGION + ".DE.zones", "FKB,FRA");
+        properties.setProperty(PROPERTY_REGION + ".US.zones", "LAS,LASDEV");
 
-      properties.put(PROPERTY_SO_TIMEOUT, 60000 * 5);
-      properties.put(PROPERTY_CONNECTION_TIMEOUT, 60000 * 5);
-      
-      return properties;
-   }
+        properties.setProperty(PROPERTY_ZONES, "FKB,FRA,LAS,LASDEV");
+        properties.setProperty(PROPERTY_ZONE + ".FKB." + ISO3166_CODES, "DE-BW");
+        properties.setProperty(PROPERTY_ZONE + ".FRA." + ISO3166_CODES, "DE-HE");
+        properties.setProperty(PROPERTY_ZONE + ".LAS." + ISO3166_CODES, "US-NV");
+        properties.setProperty(PROPERTY_ZONE + ".LASDEV." + ISO3166_CODES, "US-NV");
 
-   public static class Builder extends BaseProviderMetadata.Builder {
+        long defaultTimeout = 60l * 60l; // 1 hour
+        properties.put(POLL_TIMEOUT, defaultTimeout);
+        properties.put(POLL_PERIOD, 2l);
+        properties.put(POLL_MAX_PERIOD, 2l * 10l);
 
-      protected Builder() {
-         id("profitbricks-rest")
-            .name("ProfitBricks REST Compute")
-            .apiMetadata(new ProfitBricksApiMetadata())
-            .homepage(URI.create("https://www.profitbricks.com/"))
-            .console(URI.create("https://my.profitbricks.com/dashboard/dcdr2"))
-            .iso3166Codes("DE-FKB", "DE-FRA", "US-LAS", "US-LASDEV")
-            .endpoint("https://api.profitbricks.com/rest/v2/")
-            .defaultProperties(ProfitBricksProviderMetadata.defaultProperties());
-      }
+        properties.put(PROPERTY_SO_TIMEOUT, 60000 * 5);
+        properties.put(PROPERTY_CONNECTION_TIMEOUT, 60000 * 5);
 
-      @Override
-      public ProfitBricksProviderMetadata build() {
-         return new ProfitBricksProviderMetadata(this);
-      }
+        return properties;
+    }
 
-      @Override
-      public Builder fromProviderMetadata(ProviderMetadata in) {
-         super.fromProviderMetadata(in);
-         return this;
-      }
-   }
+    public static class Builder extends BaseProviderMetadata.Builder {
+
+        protected Builder() {
+            id("profitbricks-rest")
+                    .name("ProfitBricks REST Compute")
+                    .apiMetadata(new ProfitBricksApiMetadata())
+                    .homepage(URI.create("https://www.profitbricks.com/"))
+                    .console(URI.create("https://my.profitbricks.com/dashboard/dcdr2"))
+                    .iso3166Codes("DE-FKB", "DE-FRA", "US-LAS", "US-LASDEV")
+                    .endpoint("https://api.profitbricks.com/rest/v2/")
+                    .defaultProperties(ProfitBricksProviderMetadata.defaultProperties());
+        }
+
+        @Override
+        public ProfitBricksProviderMetadata build() {
+            return new ProfitBricksProviderMetadata(this);
+        }
+
+        @Override
+        public Builder fromProviderMetadata(ProviderMetadata in) {
+            super.fromProviderMetadata(in);
+            return this;
+        }
+    }
 }

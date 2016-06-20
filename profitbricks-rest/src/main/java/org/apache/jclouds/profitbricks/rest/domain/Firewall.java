@@ -46,7 +46,7 @@ public abstract class Firewall {
    public abstract Boolean active();
 
    @Nullable
-   public abstract ProvisioningState state();
+   public abstract State state();
 
    @Nullable
    public abstract List<Rule> rules();
@@ -67,7 +67,7 @@ public abstract class Firewall {
 
       public abstract Builder active(Boolean active);
 
-      public abstract Builder state(ProvisioningState state);
+      public abstract Builder state(State state);
 
       public abstract Builder rules(List<Rule> rules);
 

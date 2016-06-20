@@ -68,6 +68,7 @@ public class DataCenterApiMockTest extends BaseProfitBricksApiMockTest {
       
       assertNotNull(dataCenter);
       assertEquals(dataCenter.properties().name(), "docker");
+      assertEquals(dataCenter.properties().location(), Location.US_LAS);
       
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "GET", "/datacenters/some-id");
@@ -90,7 +91,7 @@ public class DataCenterApiMockTest extends BaseProfitBricksApiMockTest {
          new MockResponse().setBody(stringFromResource("/datacenter/get.json"))
       );
       
-      DataCenter dataCenter = dataCenterApi().create("test-data-center", "example description", Location.US_LAS.value());
+      DataCenter dataCenter = dataCenterApi().create("test-data-center", "example description", Location.US_LAS.getId());
       
       assertNotNull(dataCenter);
       assertNotNull(dataCenter.id());
