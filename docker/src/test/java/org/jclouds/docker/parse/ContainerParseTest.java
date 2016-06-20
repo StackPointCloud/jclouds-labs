@@ -27,6 +27,7 @@ import org.jclouds.docker.domain.Config;
 import org.jclouds.docker.domain.Container;
 import org.jclouds.docker.domain.HostConfig;
 import org.jclouds.docker.domain.NetworkSettings;
+import org.jclouds.docker.domain.Node;
 import org.jclouds.docker.domain.State;
 import org.jclouds.docker.internal.BaseDockerParseTest;
 import org.testng.annotations.Test;
@@ -54,12 +55,11 @@ public class ContainerParseTest extends BaseDockerParseTest<Container> {
               .config(Config.builder()
                       .hostname("6c9932f478bd")
                       .env(ImmutableList.of("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"))
-                      .image("57e570db16baba1e8c0d6f3c15868ddb400f64ff76ec948e65c3ca3f15fb3587")
+                      .image("zettio/weave")
                       .domainname("")
                       .user("")
                       .cmd(ImmutableList.of("-name", "7a:63:a2:39:7b:0f"))
                       .entrypoint(ImmutableList.of("/home/weave/weaver", "-iface", "ethwe", "-wait", "5"))
-                      .image("zettio/weave")
                       .workingDir("/home/weave")
                       .exposedPorts(ImmutableMap.of("6783/tcp", ImmutableMap.of(), "6783/udp", ImmutableMap.of()))
                       .build())
@@ -111,10 +111,13 @@ public class ContainerParseTest extends BaseDockerParseTest<Container> {
                                       "6783/tcp", ImmutableList.<Map<String, String>>of(ImmutableMap.of("HostIp", "", "HostPort", "6783")),
                                       "6783/udp", ImmutableList.<Map<String, String>>of(ImmutableMap.of("HostIp", "", "HostPort", "6783")))
                       )
+                      .capAdd(ImmutableList.of("NET_ADMIN"))
+                      .capDrop(ImmutableList.of("MKNOD"))
                       .dns(ImmutableList.of("8.8.8.8", "8.8.4.4"))
                       .extraHosts(ImmutableList.<String>of("extra:169.254.0.1"))
                       .privileged(true)
                       .networkMode("bridge")
+                      .restartPolicy(ImmutableMap.<String, String> of("MaximumRetryCount", "0", "Name", ""))
                       .build())
               .driver("aufs")
               .execDriver("native-0.2")
@@ -122,6 +125,8 @@ public class ContainerParseTest extends BaseDockerParseTest<Container> {
               .hostsPath("/var/lib/docker/containers/6c9932f478bd761f32ddb54ed28ab42ab6fac6f2a279f561ea31503ee9d39524/hosts")
               .mountLabel("")
               .processLabel("")
+              .node(Node.builder().
+                      ip("10.10.10.10").build())
               .build();
    }
 }

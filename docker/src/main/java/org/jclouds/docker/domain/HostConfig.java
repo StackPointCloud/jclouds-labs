@@ -16,56 +16,68 @@
  */
 package org.jclouds.docker.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.docker.internal.NullSafeCopies.copyOf;
+import static org.jclouds.docker.internal.NullSafeCopies.copyWithNullOf;
 
 import java.util.List;
 import java.util.Map;
-
-import org.jclouds.javax.annotation.Nullable;
-import org.jclouds.json.SerializedNames;
 
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import org.jclouds.javax.annotation.Nullable;
+import org.jclouds.json.SerializedNames;
+
 @AutoValue
 public abstract class HostConfig {
    @Nullable public abstract String containerIDFile();
 
-   public abstract List<String> binds();
+   @Nullable public abstract List<String> binds();
 
    public abstract List<Map<String, String>> lxcConf();
 
    public abstract boolean privileged();
 
-   public abstract List<String> dns();
+   @Nullable public abstract List<String> dns();
 
    @Nullable public abstract List<String> dnsSearch();
 
    public abstract Map<String, List<Map<String, String>>> portBindings();
 
-   public abstract List<String> links();
+   @Nullable public abstract List<String> links();
 
-   public abstract List<String> extraHosts();
+   @Nullable public abstract List<String> extraHosts();
 
    public abstract boolean publishAllPorts();
 
-   public abstract List<String> volumesFrom();
+   @Nullable public abstract List<String> volumesFrom();
 
-   @Nullable
-   public abstract String networkMode();
+   @Nullable public abstract String networkMode();
+
+   @Nullable public abstract List<String> securityOpt();
+
+   @Nullable public abstract List<String> capAdd();
+
+   @Nullable public abstract List<String> capDrop();
+
+   public abstract Map<String, String> restartPolicy();
+
+
 
    HostConfig() {
    }
 
    @SerializedNames({ "ContainerIDFile", "Binds", "LxcConf", "Privileged", "Dns", "DnsSearch", "PortBindings",
-         "Links", "ExtraHosts", "PublishAllPorts", "VolumesFrom", "NetworkMode" })
+         "Links", "ExtraHosts", "PublishAllPorts", "VolumesFrom", "NetworkMode", "SecurityOpt",
+         "CapAdd", "CapDrop", "RestartPolicy" })
    public static HostConfig create(String containerIDFile, List<String> binds, List<Map<String, String>> lxcConf,
          boolean privileged, List<String> dns, List<String> dnsSearch, Map<String, List<Map<String, String>>> portBindings,
-         List<String> links, List<String> extraHosts, boolean publishAllPorts, List<String> volumesFrom, String networkMode) {
-      return new AutoValue_HostConfig(containerIDFile, copyOf(binds), copyOf(lxcConf), privileged, copyOf(dns), copyOf(dnsSearch),
-            copyOf(portBindings), copyOf(links), copyOf(extraHosts), publishAllPorts, copyOf(volumesFrom), networkMode);
+         List<String> links, List<String> extraHosts, boolean publishAllPorts, List<String> volumesFrom, String networkMode, 
+         List<String> securityOpt, List<String> capAdd, List<String> capDrop, Map<String, String> restartPolicy) {
+      return new AutoValue_HostConfig(containerIDFile, copyWithNullOf(binds), copyOf(lxcConf), privileged, copyWithNullOf(dns), copyWithNullOf(dnsSearch),
+            copyOf(portBindings), copyWithNullOf(links), copyWithNullOf(extraHosts), publishAllPorts, copyWithNullOf(volumesFrom), networkMode,
+            copyOf(securityOpt), copyWithNullOf(capAdd), copyWithNullOf(capDrop), copyOf(restartPolicy));
    }
 
    public static Builder builder() {
@@ -79,30 +91,34 @@ public abstract class HostConfig {
    public static final class Builder {
 
       private String containerIDFile;
-      private List<String> binds = Lists.newArrayList();
+      private List<String> binds;
       private List<Map<String, String>> lxcConf = Lists.newArrayList();
       private boolean privileged;
-      private List<String> dns = Lists.newArrayList();
-      private List<String> dnsSearch = Lists.newArrayList();
+      private List<String> dns;
+      private List<String> dnsSearch;
       private Map<String, List<Map<String, String>>> portBindings = Maps.newLinkedHashMap();
-      private List<String> links = Lists.newArrayList();
-      private List<String> extraHosts = Lists.newArrayList();
+      private List<String> links;
+      private List<String> extraHosts;
       private boolean publishAllPorts;
-      private List<String> volumesFrom = Lists.newArrayList();
+      private List<String> volumesFrom;
       private String networkMode;
-
+      private List<String> securityOpt = Lists.newArrayList();
+      private List<String> capAdd;
+      private List<String> capDrop;
+      private Map<String, String> restartPolicy = Maps.newHashMap();
+      
       public Builder containerIDFile(String containerIDFile) {
          this.containerIDFile = containerIDFile;
          return this;
       }
 
       public Builder binds(List<String> binds) {
-         this.binds.addAll(checkNotNull(binds, "binds"));
+         this.binds = binds;
          return this;
       }
 
       public Builder lxcConf(List<Map<String, String>> lxcConf) {
-         this.lxcConf.addAll(checkNotNull(lxcConf, "lxcConf"));
+         this.lxcConf = lxcConf;
          return this;
       }
 
@@ -112,27 +128,27 @@ public abstract class HostConfig {
       }
 
       public Builder dns(List<String> dns) {
-         this.dns.addAll(checkNotNull(dns, "dns"));
+         this.dns = dns;
          return this;
       }
 
       public Builder dnsSearch(List<String> dnsSearch) {
-         this.dnsSearch.addAll(checkNotNull(dnsSearch, "dnsSearch"));
+         this.dnsSearch = dnsSearch;
          return this;
       }
 
       public Builder links(List<String> links) {
-         this.links.addAll(checkNotNull(links, "links"));
+         this.links = links;
          return this;
       }
 
       public Builder extraHosts(List<String> extraHosts) {
-         this.extraHosts.addAll(checkNotNull(extraHosts, "extraHosts"));
+         this.extraHosts = extraHosts;
          return this;
       }
 
       public Builder portBindings(Map<String, List<Map<String, String>>> portBindings) {
-         this.portBindings.putAll(portBindings);
+         this.portBindings = portBindings;
          return this;
       }
 
@@ -142,7 +158,7 @@ public abstract class HostConfig {
       }
 
       public Builder volumesFrom(List<String> volumesFrom) {
-         this.volumesFrom.addAll(checkNotNull(volumesFrom, "volumesFrom"));
+         this.volumesFrom = volumesFrom;
          return this;
       }
 
@@ -151,16 +167,37 @@ public abstract class HostConfig {
          return this;
       }
 
+      public Builder securityOpt(List<String> securityOpt) {
+         this.securityOpt = securityOpt;
+         return this;
+      }
+
+      public Builder capAdd(List<String> capAdd) {
+         this.capAdd = capAdd;
+         return this;
+      }
+
+      public Builder capDrop(List<String> capDrop) {
+         this.capDrop = capDrop;
+         return this;
+      }
+
+      public Builder restartPolicy(Map<String, String> restartPolicy) {
+         this.restartPolicy = restartPolicy;
+         return this;
+      }
+      
       public HostConfig build() {
          return HostConfig.create(containerIDFile, binds, lxcConf, privileged, dns, dnsSearch, portBindings, links,
-               extraHosts, publishAllPorts, volumesFrom, networkMode);
+               extraHosts, publishAllPorts, volumesFrom, networkMode, securityOpt, capAdd, capDrop, restartPolicy);
       }
 
       public Builder fromHostConfig(HostConfig in) {
          return this.containerIDFile(in.containerIDFile()).binds(in.binds()).lxcConf(in.lxcConf())
                .privileged(in.privileged()).dns(in.dns()).dnsSearch(in.dnsSearch()).links(in.links())
                .extraHosts(in.extraHosts()).portBindings(in.portBindings()).publishAllPorts(in.publishAllPorts())
-               .volumesFrom(in.volumesFrom()).networkMode(in.networkMode());
+               .volumesFrom(in.volumesFrom()).networkMode(in.networkMode()).securityOpt(in.securityOpt())
+               .capAdd(in.capAdd()).capDrop(in.capDrop()).restartPolicy(in.restartPolicy());
       }
    }
 }

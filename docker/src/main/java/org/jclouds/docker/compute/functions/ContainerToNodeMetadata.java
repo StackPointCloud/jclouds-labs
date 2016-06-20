@@ -31,6 +31,7 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.functions.GroupNamingConvention;
 import org.jclouds.docker.domain.Container;
+import org.jclouds.docker.domain.NetworkSettings;
 import org.jclouds.docker.domain.State;
 import org.jclouds.domain.Location;
 import org.jclouds.providers.ProviderMetadata;
@@ -38,6 +39,7 @@ import org.jclouds.providers.ProviderMetadata;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Singleton;
 
@@ -61,9 +63,9 @@ public class ContainerToNodeMetadata implements Function<Container, NodeMetadata
 
    @Inject
    ContainerToNodeMetadata(ProviderMetadata providerMetadata,
-         Function<State, NodeMetadata.Status> toPortableStatus, GroupNamingConvention.Factory namingConvention,
-         Supplier<Map<String, ? extends Image>> images, @Memoized Supplier<Set<? extends Location>> locations,
-         LoginPortForContainer loginPortForContainer) {
+                           Function<State, NodeMetadata.Status> toPortableStatus, GroupNamingConvention.Factory namingConvention,
+                           Supplier<Map<String, ? extends Image>> images, @Memoized Supplier<Set<? extends Location>> locations,
+                           LoginPortForContainer loginPortForContainer) {
       this.providerMetadata = providerMetadata;
       this.toPortableStatus = toPortableStatus;
       this.nodeNamingConvention = namingConvention.createWithoutPrefix();
@@ -81,7 +83,7 @@ public class ContainerToNodeMetadata implements Function<Container, NodeMetadata
               .name(name)
               .group(group)
               .hostname(container.config().hostname())
-               // TODO Set up hardware
+              // TODO Set up hardware
               .hardware(new HardwareBuilder()
                       .id("")
                       .ram(container.config().memory())
@@ -89,14 +91,14 @@ public class ContainerToNodeMetadata implements Function<Container, NodeMetadata
                       .build());
       builder.status(toPortableStatus.apply(container.state()));
       builder.loginPort(loginPortForContainer.apply(container).or(NO_LOGIN_PORT));
-      builder.publicAddresses(getPublicIpAddresses());
+      builder.publicAddresses(getPublicIpAddresses(container));
       builder.privateAddresses(getPrivateIpAddresses(container));
       builder.location(Iterables.getOnlyElement(locations.get()));
       String imageId = container.image();
       builder.imageId(imageId);
       if (images.get().containsKey(imageId)) {
-          Image image = images.get().get(imageId);
-          builder.operatingSystem(image.getOperatingSystem());
+         Image image = images.get().get(imageId);
+         builder.operatingSystem(image.getOperatingSystem());
       }
       return builder.build();
    }
@@ -106,12 +108,33 @@ public class ContainerToNodeMetadata implements Function<Container, NodeMetadata
    }
 
    private Iterable<String> getPrivateIpAddresses(Container container) {
+      // A container can be attached to multiple networks. It can therefore have multiple private
+      // IPs. The NetworkSettings.ipAddress might in fact be blank, with the only IP being on
+      // network objects.
       if (container.networkSettings() == null) return ImmutableList.of();
-      return ImmutableList.of(container.networkSettings().ipAddress());
+      ImmutableSet.Builder<String> builder = ImmutableSet.<String>builder();
+      NetworkSettings settings = container.networkSettings();
+      if (settings.ipAddress() != null && settings.ipAddress().length() > 0) {
+         builder.add(settings.ipAddress());
+      }
+      if (settings.networks() != null) {
+         for (Map.Entry<String, NetworkSettings.Details> entry : settings.networks().entrySet()) {
+            String ipAddress = entry.getValue().ipAddress();
+            if (ipAddress != null && ipAddress.length() > 0) {
+               builder.add(ipAddress);
+            }
+         }
+      }
+      return builder.build();
    }
 
-   private List<String> getPublicIpAddresses() {
-      String dockerIpAddress = URI.create(providerMetadata.getEndpoint()).getHost();
+   private List<String> getPublicIpAddresses(Container container) {
+      String dockerIpAddress;
+      if (container.node().isPresent()) {
+         dockerIpAddress = container.node().get().ip();
+      } else {
+         dockerIpAddress = URI.create(providerMetadata.getEndpoint()).getHost();
+      }
       return ImmutableList.of(dockerIpAddress);
    }
 

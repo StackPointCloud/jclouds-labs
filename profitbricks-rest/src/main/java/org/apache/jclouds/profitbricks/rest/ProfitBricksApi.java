@@ -19,8 +19,8 @@ package org.apache.jclouds.profitbricks.rest;
 import com.google.common.annotations.Beta;
 import java.io.Closeable;
 import org.apache.jclouds.profitbricks.rest.features.DataCenterApi;
+import org.apache.jclouds.profitbricks.rest.features.FirewallApi;
 import org.apache.jclouds.profitbricks.rest.features.ImageApi;
-import org.apache.jclouds.profitbricks.rest.features.IpBlockApi;
 import org.apache.jclouds.profitbricks.rest.features.LanApi;
 import org.apache.jclouds.profitbricks.rest.features.NicApi;
 import org.apache.jclouds.profitbricks.rest.features.ServerApi;
@@ -30,29 +30,29 @@ import org.jclouds.rest.annotations.Delegate;
 
 @Beta
 public interface ProfitBricksApi extends Closeable {
+   
+   @Delegate
+   DataCenterApi dataCenterApi();
+   
+   @Delegate
+   ServerApi serverApi();
+   
+   @Delegate
+   VolumeApi volumeApi();
 
-    @Delegate
-    DataCenterApi dataCenterApi();
-
-    @Delegate
-    ServerApi serverApi();
-
-    @Delegate
-    VolumeApi volumeApi();
-
-    @Delegate
-    ImageApi imageApi();
-
-    @Delegate
-    SnapshotApi snapshotApi();
-
-    @Delegate
-    NicApi nicApi();
-
-    @Delegate
-    LanApi lanApi();
-
-    @Delegate
-    IpBlockApi ipBlockApi();
+   @Delegate
+   ImageApi imageApi();
+   
+   @Delegate
+   SnapshotApi snapshotApi();
+   
+   @Delegate
+   NicApi nicApi();
+   
+   @Delegate
+   LanApi lanApi();
+   
+   @Delegate
+   FirewallApi firewallApi();
 
 }

@@ -17,10 +17,13 @@
 package org.jclouds.docker.compute.options;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.docker.domain.Config;
@@ -28,10 +31,6 @@ import org.jclouds.docker.internal.NullSafeCopies;
 import org.jclouds.domain.LoginCredentials;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.scriptbuilder.domain.Statement;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Contains options supported by the
@@ -84,18 +83,19 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
    private static final String NO_IMAGE = "jclouds-placeholder-for-image";
 
    protected List<String> dns = ImmutableList.of();
-   protected String hostname;
-   protected Integer memory;
-   protected Integer cpuShares;
-   protected List<String> entrypoint;
-   protected List<String> commands;
+   @Nullable protected String hostname;
+   @Nullable protected Integer memory;
+   @Nullable protected Integer cpuShares;
+   @Nullable List<String> entrypoint;
+   @Nullable List<String> commands;
    protected Map<String, String> volumes = ImmutableMap.of();
-   protected List<String> env;
+   @Nullable protected List<String> env;
    protected Map<Integer, Integer> portBindings = ImmutableMap.of();
-   protected String networkMode;
+   @Nullable protected String networkMode;
    protected Map<String, String> extraHosts = ImmutableMap.of();
+   protected List<String> volumesFrom = ImmutableList.of();
    protected boolean privileged;
-
+   protected boolean openStdin;
    protected Config.Builder configBuilder;
 
    @Override
@@ -110,27 +110,20 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
       super.copyTo(to);
       if (to instanceof DockerTemplateOptions) {
          DockerTemplateOptions eTo = DockerTemplateOptions.class.cast(to);
-         if (!volumes.isEmpty()) {
-            eTo.volumes(volumes);
-         }
+         eTo.volumes(volumes);
          eTo.hostname(hostname);
-         if (!dns.isEmpty()) {
-            eTo.dns(dns);
-         }
+         eTo.dns(dns);
          eTo.memory(memory);
          eTo.cpuShares(cpuShares);
          eTo.entrypoint(entrypoint);
          eTo.commands(commands);
          eTo.env(env);
-         if (!portBindings.isEmpty()) {
-            eTo.portBindings(portBindings);
-         }
+         eTo.portBindings(portBindings);
          eTo.networkMode(networkMode);
-         if (!extraHosts.isEmpty()) {
-            eTo.extraHosts(extraHosts);
-         }
+         eTo.extraHosts(extraHosts);
+         eTo.volumesFrom(volumesFrom);
          eTo.privileged(privileged);
-
+         eTo.openStdin(openStdin);
          eTo.configBuilder(configBuilder);
       }
    }
@@ -142,17 +135,21 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
       if (o == null || getClass() != o.getClass())
          return false;
       DockerTemplateOptions that = DockerTemplateOptions.class.cast(o);
-      return super.equals(that) && equal(this.volumes, that.volumes) &&
+      return super.equals(that) &&
+              equal(this.volumes, that.volumes) &&
               equal(this.hostname, that.hostname) &&
               equal(this.dns, that.dns) &&
               equal(this.memory, that.memory) &&
+              equal(this.cpuShares, that.cpuShares) &&
               equal(this.entrypoint, that.entrypoint) &&
               equal(this.commands, that.commands) &&
-              equal(this.cpuShares, that.cpuShares) &&
               equal(this.env, that.env) &&
               equal(this.portBindings, that.portBindings) &&
+              equal(this.networkMode, that.networkMode) &&
               equal(this.extraHosts, that.extraHosts) &&
+              equal(this.volumesFrom, that.volumesFrom) &&
               equal(this.privileged, that.privileged) &&
+              equal(this.openStdin, that.openStdin) &&
               buildersEqual(this.configBuilder, that.configBuilder);
    }
 
@@ -167,38 +164,43 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
    @Override
    public int hashCode() {
       return Objects.hashCode(super.hashCode(), volumes, hostname, dns, memory, entrypoint, commands, cpuShares, env,
-            portBindings, extraHosts, configBuilder);
+            portBindings, extraHosts, volumesFrom, privileged, openStdin, configBuilder);
    }
 
    @Override
    public String toString() {
       return Objects.toStringHelper(this)
-              .add("dns", dns)
+              .add("volumes", volumes)
               .add("hostname", hostname)
+              .add("dns", dns)
               .add("memory", memory)
               .add("cpuShares", cpuShares)
               .add("entrypoint", entrypoint)
               .add("commands", commands)
-              .add("volumes", volumes)
               .add("env", env)
               .add("portBindings", portBindings)
+              .add("networkMode", networkMode)
               .add("extraHosts", extraHosts)
+              .add("volumesFrom", volumesFrom)
+              .add("privileged", privileged)
+              .add("openStdin", openStdin)
               .add("configBuilder", configBuilder)
               .toString();
    }
 
    public DockerTemplateOptions volumes(Map<String, String> volumes) {
-      this.volumes = ImmutableMap.copyOf(checkNotNull(volumes, "volumes"));
+      this.volumes = NullSafeCopies.copyOf(volumes);
       return this;
    }
 
    public DockerTemplateOptions dns(Iterable<String> dns) {
-      this.dns = ImmutableList.copyOf(checkNotNull(dns, "dns"));
+      this.dns = NullSafeCopies.copyOf(dns);
       return this;
    }
 
    public DockerTemplateOptions dns(String...dns) {
-      return dns(ImmutableList.copyOf(checkNotNull(dns, "dns")));
+      this.dns = NullSafeCopies.copyOf(dns);
+      return this;
    }
 
    public DockerTemplateOptions hostname(@Nullable String hostname) {
@@ -257,7 +259,7 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
     * @param portBindings the map of host to container port bindings
     */
    public DockerTemplateOptions portBindings(Map<Integer, Integer> portBindings) {
-      this.portBindings = ImmutableMap.copyOf(checkNotNull(portBindings, "portBindings"));
+      this.portBindings = NullSafeCopies.copyOf(portBindings);
       return this;
    }
 
@@ -281,7 +283,17 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
     * @param extraHosts the map of host names to IP addresses
     */
    public DockerTemplateOptions extraHosts(Map<String, String> extraHosts) {
-      this.extraHosts = ImmutableMap.copyOf(checkNotNull(extraHosts, "extraHosts"));
+      this.extraHosts = NullSafeCopies.copyOf(extraHosts);
+      return this;
+   }
+
+   /**
+    * Set list of containers to mount volumes from onto this container.
+    *
+    * @param volumesFrom the list of container names
+    */
+   public DockerTemplateOptions volumesFrom(Iterable<String> volumesFrom) {
+      this.volumesFrom = NullSafeCopies.copyOf(volumesFrom);
       return this;
    }
 
@@ -294,6 +306,17 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
     */
    public DockerTemplateOptions privileged(boolean privileged) {
       this.privileged = privileged;
+      return this;
+   }
+
+   /**
+    * Keep {@code STDIN} open when running interactive workloads in the container.
+    *
+    * @param openStdin Whether the container should keep STDIN open
+    * @return this instance
+    */
+   public DockerTemplateOptions openStdin(boolean openStdin) {
+      this.openStdin = openStdin;
       return this;
    }
 
@@ -318,6 +341,8 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
 
    public List<String> getDns() { return dns; }
 
+   public List<String> getVolumesFrom() { return volumesFrom; }
+
    public String getHostname() { return hostname; }
 
    public Integer getMemory() { return memory; }
@@ -337,6 +362,8 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
    public Map<String, String> getExtraHosts() { return extraHosts; }
 
    public boolean getPrivileged() { return privileged; }
+
+   public boolean getOpenStdin() { return openStdin; }
 
    public Config.Builder getConfigBuilder() { return configBuilder; }
 
@@ -359,7 +386,7 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
       }
 
       /**
-       * @see DockerTemplateOptions#dns(Iterable)
+       * @see DockerTemplateOptions#dns(List)
        */
       public static DockerTemplateOptions dns(Iterable<String> dns) {
          DockerTemplateOptions options = new DockerTemplateOptions();
@@ -470,9 +497,28 @@ public class DockerTemplateOptions extends TemplateOptions implements Cloneable 
          return options.privileged(privileged);
       }
 
+      /**
+       * @see DockerTemplateOptions#openStdin(boolean)
+       */
+      public static DockerTemplateOptions openStdin(boolean openStdin) {
+         DockerTemplateOptions options = new DockerTemplateOptions();
+         return options.openStdin(openStdin);
+      }
+
+      /**
+       * @see DockerTemplateOptions#configBuilder(Config.Builder)
+       */
       public static DockerTemplateOptions configBuilder(Config.Builder configBuilder) {
          DockerTemplateOptions options = new DockerTemplateOptions();
          return options.configBuilder(configBuilder);
+      }
+
+      /**
+       * @see DockerTemplateOptions#volumesFrom(Iterable)
+       */
+      public static DockerTemplateOptions volumesFrom(Iterable<String> volumesFrom) {
+         DockerTemplateOptions options = new DockerTemplateOptions();
+         return options.volumesFrom(volumesFrom);
       }
 
       /**

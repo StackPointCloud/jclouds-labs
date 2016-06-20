@@ -34,6 +34,14 @@ public class NullSafeCopies {
       return list != null ? ImmutableList.copyOf(list) : ImmutableList.<E> of();
    }
 
+   public static <E> List<E> copyOf(@Nullable Iterable<E> list) {
+      return list != null ? ImmutableList.copyOf(list) : ImmutableList.<E> of();
+   }
+
+   public static <E> List<E> copyOf(@Nullable E[] array) {
+      return array != null ? ImmutableList.copyOf(array) : ImmutableList.<E> of();
+   }
+
    /**
     * Copies given List with keeping null value if provided.
     *
@@ -44,6 +52,18 @@ public class NullSafeCopies {
     */
    public static <E> List<E> copyWithNullOf(@Nullable List<E> list) {
       return list != null ? ImmutableList.copyOf(list) : null;
+   }
+
+   /**
+    * Copies given Map with keeping null value if provided.
+    *
+    * @param map
+    *           instance to copy (maybe <code>null</code>)
+    * @return if the parameter is not-<code>null</code> then immutable copy;
+    *         <code>null</code> otherwise
+    */
+   public static <K, V> Map<K, V> copyWithNullOf(@Nullable Map<K, V> map) {
+      return map != null ? ImmutableMap.copyOf(map) : null;
    }
 
    /**
