@@ -21,7 +21,7 @@ import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
 @AutoValue
-public abstract class Snapshot implements Provisionable {
+public abstract class Snapshot {
 
    public abstract String id();
 

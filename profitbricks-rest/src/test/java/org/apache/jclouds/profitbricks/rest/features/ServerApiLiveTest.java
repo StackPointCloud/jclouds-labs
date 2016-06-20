@@ -101,8 +101,9 @@ public class ServerApiLiveTest extends BaseProfitBricksLiveTest {
               .cores(2)
               .build());
 
-      assertNodeAvailable(ServerRef.create(dataCenter.id(), testServer.id()));
       assertDataCenterAvailable(dataCenter);
+
+      assertNodeAvailable(ServerRef.create(dataCenter.id(), testServer.id()));
       assertNodeRunning(ServerRef.create(dataCenter.id(), testServer.id()));
       
       Server server = serverApi().getServer(dataCenter.id(), testServer.id());

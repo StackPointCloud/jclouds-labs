@@ -17,7 +17,7 @@
 package org.apache.jclouds.profitbricks.rest.domain;
 
 public enum Location {
-
+   
    DE_FKB("de/fkb", "Germany, Karlsruhe"),
    DE_FRA("de/fra", "Germany, Frankfurt (M)"),
    US_LAS("us/las", "USA, Las Vegas"),
@@ -30,6 +30,10 @@ public enum Location {
    Location(String id, String description) {
       this.id = id;
       this.description = description;
+   }
+   
+   public String value() {
+      return id;
    }
 
    public String getId() {
@@ -49,10 +53,5 @@ public enum Location {
          if (location.id.equals(id))
             return location;
       return UNRECOGNIZED;
-   }
-
-   @Override
-   public String toString() {
-      return id;
    }
 }

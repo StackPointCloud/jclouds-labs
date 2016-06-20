@@ -24,293 +24,272 @@ import org.jclouds.json.SerializedNames;
 
 @AutoValue
 public abstract class Server {
+   
+   public abstract String id();
+   
+   @Nullable
+   public abstract String dataCenterId();
 
-    public abstract String id();
+   public abstract String type();
 
-    @Nullable
-    public abstract String dataCenterId();
+   public abstract String href();
+   
+   @Nullable
+   public abstract Metadata metadata();
 
-    public abstract String type();
+   @Nullable
+   public abstract Properties properties();
 
-    public abstract String href();
+   @Nullable
+   public abstract Entities entities();
 
-    @Nullable
-    public abstract Metadata metadata();
+   @SerializedNames({"id", "dataCenterId", "type", "href", "metadata", "properties", "entities"})
+   public static Server create(String id, String dataCenterId, String type, String href, Metadata metadata, Properties properties, Entities entities) {
+      return new AutoValue_Server(id, dataCenterId, type, href, metadata, properties, entities);
+   }
 
-    @Nullable
-    public abstract Properties properties();
+   @AutoValue
+   public abstract static class Properties {
 
-    @Nullable
-    public abstract Entities entities();
+      public abstract String name();
 
-    @SerializedNames({"id", "dataCenterId", "type", "href", "metadata", "properties", "entities"})
-    public static Server create(String id, String dataCenterId, String type, String href, Metadata metadata, Properties properties, Entities entities) {
-        return new AutoValue_Server(id, dataCenterId, type, href, metadata, properties, entities);
-    }
+      public abstract int cores();
 
-    @AutoValue
-    public abstract static class Properties {
+      public abstract int ram();
 
-        public abstract String name();
+      @Nullable
+      public abstract AvailabilityZone availabilityZone();
+      
+      @Nullable
+      public abstract Server.Status vmState();
+      
+      @Nullable
+      public abstract LicenceType licenceType();
 
-        public abstract int cores();
+      @Nullable
+      public abstract Volume bootVolume();
 
-        public abstract int ram();
+      @Nullable
+      public abstract Volume bootCdrom();
 
-        @Nullable
-        public abstract AvailabilityZone availabilityZone();
+      @SerializedNames({"name", "cores", "ram", "availabilityZone", "vmState", "licenceType", "bootVolume", "bootCdrom"})
+      public static Properties create(String name, int cores, int ram, AvailabilityZone availabilityZone, Server.Status vmState, LicenceType licenceType, Volume bootVolume, Volume bootCdrom) {
+         return new AutoValue_Server_Properties(name, cores, ram, availabilityZone, vmState, licenceType, bootVolume, bootCdrom);
+      }
 
-        @Nullable
-        public abstract Server.Status vmState();
+   }
 
-        @Nullable
-        public abstract LicenceType licenceType();
+   @AutoValue
+   public abstract static class Entities {
 
-        @Nullable
-        public abstract Volume bootVolume();
+      @Nullable
+      public abstract Images cdroms();
+      
+      @Nullable
+      public abstract Volumes volumes();
 
-        @Nullable
-        public abstract Volume bootCdrom();
+      @Nullable
+      public abstract Nics nics();
 
-        @SerializedNames({"name", "cores", "ram", "availabilityZone", "vmState", "licenceType", "bootVolume", "bootCdrom"})
-        public static Properties create(String name, int cores, int ram, AvailabilityZone availabilityZone, Server.Status vmState, LicenceType licenceType, Volume bootVolume, Volume bootCdrom) {
-            return new AutoValue_Server_Properties(name, cores, ram, availabilityZone, vmState, licenceType, bootVolume, bootCdrom);
-        }
+      @SerializedNames({"cdroms", "volumes", "nics"})
+      public static Entities create(Images cdroms, Volumes volumes, Nics nics) {
+         return new AutoValue_Server_Entities(cdroms, volumes, nics);
+      }
 
-    }
+   }
+   
+   public static final class Request {
 
-    @AutoValue
-    public abstract static class Entities {
+      public static CreatePayload.Builder creatingBuilder() {
+         return new AutoValue_Server_Request_CreatePayload.Builder();
+      }
 
-        @Nullable
-        public abstract Images cdroms();
+      public static UpdatePayload.Builder updatingBuilder() {
+         return new AutoValue_Server_Request_UpdatePayload.Builder();
+      }
+      
+      public static AttachCdromPayload.Builder attachCdromBuilder() {
+         return new AutoValue_Server_Request_AttachCdromPayload.Builder();
+      }
+      
+      public static AttachVolumePayload.Builder attachVolumeBuilder() {
+         return new AutoValue_Server_Request_AttachVolumePayload.Builder();
+      }
 
-        @Nullable
-        public abstract Volumes volumes();
+      @AutoValue
+      public abstract static class CreatePayload {
 
-        @Nullable
-        public abstract Nics nics();
+         public abstract String name();
+         
+         public abstract int cores();
 
-        @SerializedNames({"cdroms", "volumes", "nics"})
-        public static Entities create(Images cdroms, Volumes volumes, Nics nics) {
-            return new AutoValue_Server_Entities(cdroms, volumes, nics);
-        }
+         public abstract int ram();
 
-    }
+         public abstract String dataCenterId();
 
-    @AutoValue
-    public abstract static class BootVolume {
+         @Nullable
+         public abstract Volume bootVolume();
 
-        public abstract String id();
+         @Nullable
+         public abstract Volume bootCdrom();
 
-        @SerializedNames({"id"})
-        public static BootVolume create(String id) {
-            return new AutoValue_Server_BootVolume(id);
-        }
+         @Nullable
+         public abstract AvailabilityZone availabilityZone();
+         
+         @Nullable
+         public abstract LicenceType licenceType();
+        
+         @Nullable
+         public abstract Entities entities();
+                  
+         @AutoValue.Builder
+         public abstract static class Builder {
 
-    }
+            public abstract Builder name(String name);
 
-    public static final class Request {
+            public abstract Builder cores(int cores);
 
-        public static CreatePayload.Builder creatingBuilder() {
-            return new AutoValue_Server_Request_CreatePayload.Builder();
-        }
+            public abstract Builder ram(int ram);
 
-        public static UpdatePayload.Builder updatingBuilder() {
-            return new AutoValue_Server_Request_UpdatePayload.Builder();
-        }
+            public abstract Builder dataCenterId(String dataCenterId);
 
-        public static AttachCdromPayload.Builder attachCdromBuilder() {
-            return new AutoValue_Server_Request_AttachCdromPayload.Builder();
-        }
+            public abstract Builder bootVolume(Volume bootVolume);
 
-        public static AttachVolumePayload.Builder attachVolumeBuilder() {
-            return new AutoValue_Server_Request_AttachVolumePayload.Builder();
-        }
+            public abstract Builder bootCdrom(Volume bootCdrom);
 
-        @AutoValue
-        public abstract static class CreatePayload {
+            public abstract Builder availabilityZone(AvailabilityZone availabilityZone);
+            
+            public abstract Builder licenceType(LicenceType licenceType);
+           
+            public abstract Builder entities(Entities entities);
+            
+            abstract CreatePayload autoBuild();
 
-            public abstract String name();
-
-            public abstract int cores();
-
-            public abstract int ram();
-
-            public abstract String dataCenterId();
-
-            @Nullable
-            public abstract BootVolume bootVolume();
-
-            @Nullable
-            public abstract String bootCdrom();
-
-            @Nullable
-            public abstract AvailabilityZone availabilityZone();
-
-            @Nullable
-            public abstract LicenceType licenceType();
-
-            @Nullable
-            public abstract Entities entities();
-
-            @AutoValue.Builder
-            public abstract static class Builder {
-
-                public abstract Builder name(String name);
-
-                public abstract Builder cores(int cores);
-
-                public abstract Builder ram(int ram);
-
-                public abstract Builder dataCenterId(String dataCenterId);
-
-                public abstract Builder bootVolume(BootVolume bootVolume);
-
-                public abstract Builder bootCdrom(String bootCdrom);
-
-                public abstract Builder availabilityZone(AvailabilityZone availabilityZone);
-
-                public abstract Builder licenceType(LicenceType licenceType);
-
-                public abstract Builder entities(Entities entities);
-
-                abstract CreatePayload autoBuild();
-
-                public CreatePayload build() {
-                    CreatePayload payload = autoBuild();
-                    checkCores(payload.cores());
-                    return payload;
-                }
+            public CreatePayload build() {
+               CreatePayload payload = autoBuild();
+               checkCores(payload.cores());
+               return payload;
             }
+         }
 
-        }
+      }
 
-        @AutoValue
-        public abstract static class UpdatePayload {
+      @AutoValue
+      public abstract static class UpdatePayload {
 
-            public abstract String id();
+         public abstract String id();
+         
+         public abstract String dataCenterId();
 
-            public abstract String dataCenterId();
+         @Nullable
+         public abstract String name();
+         
+         @Nullable
+         public abstract Integer cores();
 
-            @Nullable
-            public abstract String name();
+         @Nullable
+         public abstract Integer ram();
 
-            @Nullable
-            public abstract Integer cores();
+         @Nullable
+         public abstract Volume bootVolume();
 
-            @Nullable
-            public abstract Integer ram();
+         @Nullable
+         public abstract Volume bootCdrom();
 
-            @Nullable
-            public abstract Volume bootVolume();
+         @Nullable
+         public abstract AvailabilityZone availabilityZone();
+         
+         @Nullable
+         public abstract LicenceType licenceType();
 
-            @Nullable
-            public abstract Volume bootCdrom();
+         @AutoValue.Builder
+         public abstract static class Builder {
 
-            @Nullable
-            public abstract AvailabilityZone availabilityZone();
+            public abstract Builder id(String id);
+            
+            public abstract Builder dataCenterId(String dataCenterId);
+            
+            public abstract Builder name(String name);
 
-            @Nullable
-            public abstract LicenceType licenceType();
+            public abstract Builder cores(Integer cores);
 
-            @AutoValue.Builder
-            public abstract static class Builder {
+            public abstract Builder ram(Integer ram);
 
-                public abstract Builder id(String id);
+            public abstract Builder bootVolume(Volume bootVolume);
 
-                public abstract Builder dataCenterId(String dataCenterId);
+            public abstract Builder bootCdrom(Volume bootCdrom);
 
-                public abstract Builder name(String name);
+            public abstract Builder availabilityZone(AvailabilityZone availabilityZone);
+            
+            public abstract Builder licenceType(LicenceType licenceType);
 
-                public abstract Builder cores(Integer cores);
+            abstract UpdatePayload autoBuild();
 
-                public abstract Builder ram(Integer ram);
-
-                public abstract Builder bootVolume(Volume bootVolume);
-
-                public abstract Builder bootCdrom(Volume bootCdrom);
-
-                public abstract Builder availabilityZone(AvailabilityZone availabilityZone);
-
-                public abstract Builder licenceType(LicenceType licenceType);
-
-                abstract UpdatePayload autoBuild();
-
-                public UpdatePayload build() {
-                    UpdatePayload payload = autoBuild();
-                    if (payload.cores() != null) {
-                        checkCores(payload.cores());
-                    }
-                    return payload;
-                }
+            public UpdatePayload build() {
+               UpdatePayload payload = autoBuild();
+               if (payload.cores() != null)
+                  checkCores(payload.cores());
+               return payload;
             }
-        }
+         }
+      }
+      
+      @AutoValue
+      public abstract static class AttachCdromPayload {
 
-        @AutoValue
-        public abstract static class AttachCdromPayload {
+         public abstract String imageId();
+         public abstract String dataCenterId();
+         public abstract String serverId();
+         
+         @AutoValue.Builder
+         public abstract static class Builder {
+            
+            public abstract Builder imageId(String imageId);
+            public abstract Builder dataCenterId(String dataCenterId);
+            public abstract Builder serverId(String serverId);
 
-            public abstract String imageId();
+            abstract AttachCdromPayload autoBuild();
 
-            public abstract String dataCenterId();
-
-            public abstract String serverId();
-
-            @AutoValue.Builder
-            public abstract static class Builder {
-
-                public abstract Builder imageId(String imageId);
-
-                public abstract Builder dataCenterId(String dataCenterId);
-
-                public abstract Builder serverId(String serverId);
-
-                abstract AttachCdromPayload autoBuild();
-
-                public AttachCdromPayload build() {
-                    return autoBuild();
-                }
+            public AttachCdromPayload build() {
+               return autoBuild();
             }
-        }
+         }
+      }
+      
+      @AutoValue 
+      public abstract static class AttachVolumePayload {
 
-        @AutoValue
-        public abstract static class AttachVolumePayload {
+         public abstract String volumeId();
+         public abstract String dataCenterId();
+         public abstract String serverId();
+         
+         @AutoValue.Builder
+         public abstract static class Builder {
+            
+            public abstract Builder volumeId(String volumeId);
+            public abstract Builder dataCenterId(String dataCenterId);
+            public abstract Builder serverId(String serverId);
 
-            public abstract String volumeId();
+            abstract AttachVolumePayload autoBuild();
 
-            public abstract String dataCenterId();
-
-            public abstract String serverId();
-
-            @AutoValue.Builder
-            public abstract static class Builder {
-
-                public abstract Builder volumeId(String volumeId);
-
-                public abstract Builder dataCenterId(String dataCenterId);
-
-                public abstract Builder serverId(String serverId);
-
-                abstract AttachVolumePayload autoBuild();
-
-                public AttachVolumePayload build() {
-                    return autoBuild();
-                }
+            public AttachVolumePayload build() {
+               return autoBuild();
             }
-        }
-    }
+         }
+      }
+   }
+   
+   public enum Status {
 
-    public enum Status {
+      NOSTATE, RUNNING, BLOCKED, PAUSED, SHUTDOWN, SHUTOFF, CRASHED, UNRECOGNIZED;
 
-        NOSTATE, RUNNING, BLOCKED, PAUSED, SHUTDOWN, SHUTOFF, CRASHED, UNRECOGNIZED;
+      public String value() {
+         return name();
+      }
 
-        public String value() {
-            return name();
-        }
-
-        public static Status fromValue(String v) {
-            return Enums.getIfPresent(Status.class, v).or(UNRECOGNIZED);
-        }
-    }
+      public static Status fromValue(String v) {
+         return Enums.getIfPresent(Status.class, v).or(UNRECOGNIZED);
+      }
+   }
 
 }

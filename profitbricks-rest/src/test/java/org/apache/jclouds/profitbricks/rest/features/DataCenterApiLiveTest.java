@@ -96,7 +96,7 @@ public class DataCenterApiLiveTest extends BaseProfitBricksLiveTest {
       }
       
       deleteDataCenter(dataCenter.id());
-   }   
+   }
       
    private DataCenter getDataCenter(String id) {
       return dataCenterApi().getDataCenter(id);

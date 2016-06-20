@@ -130,7 +130,7 @@ public class IpBlockApiMockTest extends BaseProfitBricksApiMockTest {
         assertSent(server, "POST", "/ipblocks",
                 "{\"properties\":{\n"
                 + "\"name\":\"jclouds-block\",\n"
-                + "\"location\":\"us/las\",\n"
+                + "\"location\":\"us/lasdev\",\n"
                 + "\"size\":2}\n"
                 + "}"
         );
