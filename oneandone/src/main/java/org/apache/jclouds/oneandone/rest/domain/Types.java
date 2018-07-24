@@ -260,4 +260,14 @@ public class Types {
       }
 
    }
+
+   public enum FirewallRuleAction {
+      allow,
+      deny,
+      UNRECOGNIZED;
+
+      public static FirewallRuleAction fromValue(String v) {
+         return Enums.getIfPresent(FirewallRuleAction.class, v).or(UNRECOGNIZED);
+      }
+   }
 }
