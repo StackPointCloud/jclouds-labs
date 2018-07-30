@@ -68,7 +68,7 @@ public class ServerNetworkApiLiveTest extends BaseOneAndOneLiveTest {
       List<FirewallPolicy.Rule.CreatePayload> fwrules = new ArrayList<FirewallPolicy.Rule.CreatePayload>();
       FirewallPolicy.Rule.CreatePayload fwrule = FirewallPolicy.Rule.CreatePayload.builder()
             .port("80")
-            .action(Types.FirewallRuleAction.allow)
+            .action(Types.FirewallRuleAction.ALLOW)
             .protocol(Types.RuleProtocol.TCP)
             .source("0.0.0.0")
             .build();
