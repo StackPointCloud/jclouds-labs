@@ -20,6 +20,7 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.apache.jclouds.oneandone.rest.domain.Types.ApplianceType;
+import org.apache.jclouds.oneandone.rest.domain.Types.ServerTypeCompatibility;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
@@ -62,16 +63,18 @@ public abstract class ServerAppliance {
    public abstract String version();
 
    @Nullable
-   public abstract List<String> categories();
+   public abstract List<ServerTypeCompatibility> serverTypeCompatibility();
 
    @Nullable
-   public abstract String eulaUrl();
+   public abstract List<String> categories();
+
 
    @SerializedNames({"id", "name", "available_datacenters", "os_installation_base", "os_family", "os", "os_version", "os_architecture", "os_image_type",
-      "min_hdd_size", "type", "state", "version", "categories", "eula_url"})
+      "min_hdd_size", "type", "state", "version", "server_type_compatibility", "categories"})
    public static ServerAppliance create(String id, String name, List<String> availableDataCenters, String osInstallationBase, Types.OSFamliyType osFamily, String os,
-           String osVersion, int osArchitecture, Types.OSImageType osImageType, int minHddSize, ApplianceType type, String state, String version, List<String> categories, String eulaUrl) {
-      return new AutoValue_ServerAppliance(id, name, availableDataCenters == null ? ImmutableList.<String>of() : ImmutableList.copyOf(availableDataCenters), osInstallationBase, osFamily, os, osVersion, osArchitecture, osImageType, minHddSize, type, state, version, categories == null ? ImmutableList.<String>of() : ImmutableList.copyOf(categories), eulaUrl);
+           String osVersion, int osArchitecture, Types.OSImageType osImageType, int minHddSize, ApplianceType type, String state, String version, List<ServerTypeCompatibility> serverTypeCompatibility,
+           List<String> categories) {
+      return new AutoValue_ServerAppliance(id, name, availableDataCenters == null ? ImmutableList.<String>of() : ImmutableList.copyOf(availableDataCenters), osInstallationBase, osFamily, os, osVersion, osArchitecture, osImageType, minHddSize, type, state, version, serverTypeCompatibility == null ? ImmutableList.<ServerTypeCompatibility>of() : ImmutableList.copyOf(serverTypeCompatibility), categories == null ? ImmutableList.<String>of() : ImmutableList.copyOf(categories));
    }
 
 }

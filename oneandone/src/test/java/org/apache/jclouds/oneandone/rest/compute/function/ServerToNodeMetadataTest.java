@@ -95,7 +95,7 @@ public class ServerToNodeMetadataTest extends BaseOneAndOneApiMockTest {
          }
       };
       Supplier<Map<String, ? extends Hardware>> hardwareFlavours = Suppliers.<Map<String, ? extends Hardware>>ofInstance(ImmutableMap
-              .<String, Hardware>of("65929629F35BBFBA63022008F773F3EB", new HardwareBuilder().id("65929629F35BBFBA63022008F773F3EB").build()));
+              .<String, Hardware>of("3D4C49EAEDD42FBC23DB58FE3DEF464F,mock", new HardwareBuilder().id("mock").build()));
 
       Supplier<Map<String, ? extends Image>> images = Suppliers.<Map<String, ? extends Image>>ofInstance(ImmutableMap
               .<String, Image>of("B5F778B85C041347BCDCFC3172AB3F3C", new ImageBuilder().id("B5F778B85C041347BCDCFC3172AB3F3C")
@@ -118,8 +118,10 @@ public class ServerToNodeMetadataTest extends BaseOneAndOneApiMockTest {
       GenericQueryOptions options = new GenericQueryOptions();
       options.options(0, 0, null, "B5F778B85C041347BCDCFC3172AB3F3C", null);
       List<ServerAppliance> appliances = new ArrayList<ServerAppliance>();
+      List<Types.ServerTypeCompatibility> compatibleTypes = new ArrayList<Types.ServerTypeCompatibility>();
+      compatibleTypes.add(Types.ServerTypeCompatibility.CLOUD);
       ServerAppliance appliance = ServerAppliance.create("B5F778B85C041347BCDCFC3172AB3F3C", "name", null, "empty", Types.OSFamliyType.Linux, "ubuntu",
-              "Ubuntu14.04", 64, Types.OSImageType.Minimal, 20, Types.ApplianceType.IMAGE, null, null, null, null);
+              "Ubuntu14.04", 64, Types.OSImageType.MINIMAL, 20, Types.ApplianceType.IMAGE, null, null, compatibleTypes, null);
       appliances.add(appliance);
       List<HardwareFlavour.Hardware.Hdd> hdds = new ArrayList<HardwareFlavour.Hardware.Hdd>();
       HardwareFlavour.Hardware.Hdd hdd = HardwareFlavour.Hardware.Hdd.create("GB", 30, true);
@@ -158,6 +160,7 @@ public class ServerToNodeMetadataTest extends BaseOneAndOneApiMockTest {
               .status(NodeMetadata.Status.RUNNING)
               .hardware(new HardwareBuilder()
                       .ids("cpu=4,ram=4096,disk=40")
+                      .id("cpu=4,ram=4096,disk=40")
                       .name("cpu=4,ram=4096,disk=40")
                       .ram((int) serverObject.hardware().ram())
                       .processor(new Processor(serverObject.hardware().coresPerProcessor(), 1d))

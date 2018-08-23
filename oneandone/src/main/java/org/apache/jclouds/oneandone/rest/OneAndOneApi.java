@@ -26,6 +26,7 @@ import org.apache.jclouds.oneandone.rest.features.MonitoringCenterApi;
 import org.apache.jclouds.oneandone.rest.features.MonitoringPolicyApi;
 import org.apache.jclouds.oneandone.rest.features.PrivateNetworkApi;
 import org.apache.jclouds.oneandone.rest.features.PublicIpApi;
+import org.apache.jclouds.oneandone.rest.features.RecoveryImageApi;
 import org.apache.jclouds.oneandone.rest.features.ServerApi;
 import org.apache.jclouds.oneandone.rest.features.ServerApplianceApi;
 import org.apache.jclouds.oneandone.rest.features.SharedStorageApi;
@@ -71,6 +72,9 @@ public interface OneAndOneApi extends Closeable {
 
    @Delegate
    ServerApplianceApi serverApplianceApi();
+   
+   @Delegate
+   RecoveryImageApi recoveryImageApi();
 
    @Delegate
    BlockStorageApi blockStorageApi();

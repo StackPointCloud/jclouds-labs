@@ -49,14 +49,11 @@ public abstract class PrivateNetwork {
    public abstract List<Server> servers();
 
    @Nullable
-   public abstract String cloudpanelId();
-
-   @Nullable
    public abstract DataCenter datacenter();
 
-   @SerializedNames({"id", "name", "description", "network_address", "subnet_mask", "state", "creation_date", "servers", "cloudpanel_id", "datacenter"})
-   public static PrivateNetwork create(String id, String name, String description, String networkAddress, String subnetMask, GenericState state, String creationDate, List<Server> servers, String cloudpanelId, DataCenter datacenter) {
-      return new AutoValue_PrivateNetwork(id, name, description, networkAddress, subnetMask, state, creationDate, servers == null ? ImmutableList.<Server>of() : servers, cloudpanelId, datacenter);
+   @SerializedNames({"id", "name", "description", "network_address", "subnet_mask", "state", "creation_date", "servers", "datacenter"})
+   public static PrivateNetwork create(String id, String name, String description, String networkAddress, String subnetMask, GenericState state, String creationDate, List<Server> servers, DataCenter datacenter) {
+      return new AutoValue_PrivateNetwork(id, name, description, networkAddress, subnetMask, state, creationDate, servers == null ? ImmutableList.<Server>of() : servers, datacenter);
    }
 
    @AutoValue

@@ -47,12 +47,9 @@ public abstract class FirewallPolicy {
 
    public abstract List<ServerIp> serverIps();
 
-   @Nullable
-   public abstract String cloudpanelId();
-
-   @SerializedNames({"id", "name", "description", "state", "creation_date", "default", "rules", "server_ips", "cloudpanel_id"})
-   public static FirewallPolicy create(String id, String name, String description, String state, String creationDate, String defaultState, List<Rule> rules, List<ServerIp> serverIps, String cloudpanelId) {
-      return new AutoValue_FirewallPolicy(id, name, description, state, creationDate, defaultState, rules == null ? ImmutableList.<Rule>of() : ImmutableList.copyOf(rules), serverIps == null ? ImmutableList.<ServerIp>of() : ImmutableList.copyOf(serverIps), cloudpanelId);
+   @SerializedNames({"id", "name", "description", "state", "creation_date", "default", "rules", "server_ips"})
+   public static FirewallPolicy create(String id, String name, String description, String state, String creationDate, String defaultState, List<Rule> rules, List<ServerIp> serverIps) {
+      return new AutoValue_FirewallPolicy(id, name, description, state, creationDate, defaultState, rules == null ? ImmutableList.<Rule>of() : ImmutableList.copyOf(rules), serverIps == null ? ImmutableList.<ServerIp>of() : ImmutableList.copyOf(serverIps));
    }
 
    @AutoValue

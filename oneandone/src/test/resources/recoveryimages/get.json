@@ -1,0 +1,9 @@
+{
+    "id": "148CE80B09ED769373921F31CEE85F1F",
+    "name": "Windows 64-bit Rescue-System",
+    "os": "Other Windows",
+    "os_family": "Windows",
+    "os_version": "WindowsDatacenter",
+    "architecture": 64,
+    "available_datacenters": ["908DC2072407C94C8054610AD5A53B8C", "4EFAD5836CE43ACA502FD5B99BEE44EF", "908DC2072407C94C8054610AD5A53B8C"]
+}

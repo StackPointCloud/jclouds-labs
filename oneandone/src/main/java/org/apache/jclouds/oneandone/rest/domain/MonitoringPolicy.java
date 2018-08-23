@@ -60,12 +60,10 @@ public abstract class MonitoringPolicy {
    @Nullable
    public abstract List<Process> processes();
 
-   public abstract String cloudpanelId();
-
-   @SerializedNames({"id", "name", "description", "state", "creation_date", "default", "email", "agent", "servers", "thresholds", "ports", "processes", "cloudpanel_id"})
+   @SerializedNames({"id", "name", "description", "state", "creation_date", "default", "email", "agent", "servers", "thresholds", "ports", "processes"})
    public static MonitoringPolicy create(String id, String name, String description, String state,
-           Date creationDate, int isDefault, String email, boolean agent, List<Server> servers, Threshold thresholds, List<Port> ports, List<Process> processes, String cloudpanelId) {
-      return new AutoValue_MonitoringPolicy(id, name, description, state, creationDate, isDefault, email, agent, servers == null ? ImmutableList.<Server>of() : ImmutableList.copyOf(servers), thresholds, ports == null ? ImmutableList.<Port>of() : ImmutableList.copyOf(ports), processes == null ? ImmutableList.<Process>of() : ImmutableList.copyOf(processes), cloudpanelId);
+           Date creationDate, int isDefault, String email, boolean agent, List<Server> servers, Threshold thresholds, List<Port> ports, List<Process> processes) {
+      return new AutoValue_MonitoringPolicy(id, name, description, state, creationDate, isDefault, email, agent, servers == null ? ImmutableList.<Server>of() : ImmutableList.copyOf(servers), thresholds, ports == null ? ImmutableList.<Port>of() : ImmutableList.copyOf(ports), processes == null ? ImmutableList.<Process>of() : ImmutableList.copyOf(processes));
    }
 
    @AutoValue

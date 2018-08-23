@@ -36,9 +36,6 @@ public abstract class SharedStorage {
    @Nullable
    public abstract String description();
 
-   @Nullable
-   public abstract String cloudpanelId();
-
    public abstract int sizeUsed();
 
    @Nullable
@@ -50,15 +47,14 @@ public abstract class SharedStorage {
    public abstract String name();
 
    @Nullable
-
    public abstract String creationDate();
 
    @Nullable
    public abstract List<Server> servers();
 
-   @SerializedNames({"id", "size", "state", "description", "cloudpanel_id", "size_used", "cifs_path", "nfs_path", "name", "creation_date", "servers"})
-   public static SharedStorage create(String id, int size, String state, String description, String cloudpanelId, int sizeUsed, String cifsPath, String nfsPath, String name, String creationDate, List<Server> servers) {
-      return new AutoValue_SharedStorage(id, size, state, description, cloudpanelId, sizeUsed, cifsPath, nfsPath, name, creationDate, servers == null ? ImmutableList.<Server>of() : ImmutableList.copyOf(servers));
+   @SerializedNames({"id", "size", "state", "description", "size_used", "cifs_path", "nfs_path", "name", "creation_date", "servers"})
+   public static SharedStorage create(String id, int size, String state, String description, int sizeUsed, String cifsPath, String nfsPath, String name, String creationDate, List<Server> servers) {
+      return new AutoValue_SharedStorage(id, size, state, description, sizeUsed, cifsPath, nfsPath, name, creationDate, servers == null ? ImmutableList.<Server>of() : ImmutableList.copyOf(servers));
    }
 
    @AutoValue

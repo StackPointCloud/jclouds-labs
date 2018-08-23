@@ -31,10 +31,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.jclouds.oneandone.rest.OneAndOneApi;
-import org.apache.jclouds.oneandone.rest.domain.DataCenter;
+import org.apache.jclouds.oneandone.rest.domain.BareMetalModel;
+import org.apache.jclouds.oneandone.rest.domain.HardwareFlavour;
 import org.apache.jclouds.oneandone.rest.domain.Hdd;
 import org.apache.jclouds.oneandone.rest.domain.Server;
 import org.apache.jclouds.oneandone.rest.domain.ServerIp;
+import org.apache.jclouds.oneandone.rest.domain.Types;
 import org.apache.jclouds.oneandone.rest.domain.Types.ServerState;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
@@ -78,26 +80,42 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Override
    public NodeMetadata apply(final Server server) {
       checkNotNull(server, "Null server");
+      String hardwareId = null;
 
-      DataCenter dataCenter = api.dataCenterApi().get(server.datacenter().id());
-      Location location = find(locations.get(), idEquals(dataCenter.id()));
+      Location location = find(locations.get(), idEquals(server.datacenter().id()));
       Hardware hardware = null;
+      Float size = null;
+      Integer minRam = 0;
+      List<Hdd> hdds = null;
+      List<Volume> volumes = Lists.newArrayList();
+      List<Processor> processors = new ArrayList<Processor>();
+
       //check if the server was built on a hardware flavour(Fixed instance)
-      if (server.hardware().fixedInstanceSizeId() != null && !"0".equals(server.hardware().fixedInstanceSizeId())) {
-         hardware = hardwareFlavors.get().get(server.hardware().fixedInstanceSizeId());
+      if (server.serverType() == Types.ServerType.BAREMETAL) {
+         BareMetalModel bmModel = api.serverApi().getBaremetalModel(server.hardware().baremetalModelId());
+         hardware = hardwareFlavors.get().get(bmModel.name());
+         hardwareId = hardware.getId();
+
+      } else if (server.hardware().fixedInstanceSizeId() != null && !"0".equals(server.hardware().fixedInstanceSizeId())) {
+         HardwareFlavour flavor = api.serverApi().getHardwareFlavour(server.hardware().fixedInstanceSizeId());
+         hardware = hardwareFlavors.get().get(flavor.id() + ',' + flavor.name());
+         hardwareId = hardware.getId();
 
       } else {
-         List<Volume> volumes = Lists.newArrayList();
          //customer hardware
-         double size = 0d;
-         double minRam = server.hardware().ram();
-         List<Hdd> hdds = server.hardware().hdds();
+         size = 0F;
+         minRam = (int) server.hardware().ram();
+         hdds = server.hardware().hdds();
 
          if (server.hardware().hdds().isEmpty()) {
             hdds = api.serverApi().getHardware(server.id()).hdds();
          }
 
-         size = getHddSize(hdds);
+         size = (float) getHddSize(hdds);
+         if (size == 0) {
+            Server refreshedServer = api.serverApi().get(server.id());
+            size = (float) getHddSize(refreshedServer.hardware().hdds());
+         }
          volumes = convertHddToVolume(hdds);
 
          if (minRam < 1) {
@@ -106,22 +124,21 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
             minRam = minRam * 1024;
          }
 
-         List<Processor> processors = new ArrayList<Processor>();
          for (int i = 0; i < server.hardware().vcore(); i++) {
             Processor proc = new Processor(server.hardware().coresPerProcessor(), 1d);
             processors.add(proc);
          }
          AutomaticHardwareIdSpec id = AutomaticHardwareIdSpec.automaticHardwareIdSpecBuilder(server.hardware().vcore(), (int) minRam, Optional.of((float) size));
-         hardware = new HardwareBuilder()
-                 .ids(id.toString())
-                 .ram((int) minRam)
-                 .processors(ImmutableList.copyOf(processors))
-                 .hypervisor("kvm")
-                 .volumes(volumes)
-                 .location(location)
-                 .build();
-
+         hardwareId = id.toString();
       }
+      hardware = new HardwareBuilder()
+              .ids(hardwareId)
+              .ram((int) minRam)
+              .processors(ImmutableList.copyOf(processors))
+              .hypervisor("kvm")
+              .volumes(volumes)
+              .location(location)
+              .build();
 
       // Collect ips
       List<String> addresses = Lists.transform(server.ips(), new Function<ServerIp, String>() {

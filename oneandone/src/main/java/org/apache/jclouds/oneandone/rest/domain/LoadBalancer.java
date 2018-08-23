@@ -70,8 +70,7 @@ public abstract class LoadBalancer {
    @SerializedNames({"id", "name", "description", "state", "creation_date", "ip", "health_check_test", "health_check_interval", "health_check_path",
       "health_check_path_parser", "persistence", "persistence_time", "method", "datacenter", "rules", "server_ips"})
    public static LoadBalancer create(String id, String name, String description, String state, String creationDate, String ip, HealthCheckTestTypes healthCheckTest, int healthCheckInterval, String healthCheckPath, String healthCheckPathParser, Boolean persistence, Integer persistenceTime, Types.LoadBalancerMethod method, DataCenter datacenter, List<Rule> rules, List<ServerIp> serverIps) {
-      return new AutoValue_LoadBalancer(id, name, description, state, creationDate, ip, healthCheckTest, healthCheckInterval, healthCheckPath, healthCheckPathParser, persistence, persistenceTime, method, datacenter, rules == null ? ImmutableList.<Rule>of() : ImmutableList.copyOf(rules), serverIps == null ? ImmutableList.<ServerIp>of() : ImmutableList.copyOf(serverIps)
-      );
+      return new AutoValue_LoadBalancer(id, name, description, state, creationDate, ip, healthCheckTest, healthCheckInterval, healthCheckPath, healthCheckPathParser, persistence, persistenceTime, method, datacenter, rules == null ? ImmutableList.<Rule>of() : ImmutableList.copyOf(rules), serverIps == null ? ImmutableList.<ServerIp>of() : ImmutableList.copyOf(serverIps));
    }
 
    @AutoValue

@@ -47,14 +47,11 @@ public abstract class Vpn {
    public abstract String creationDate();
 
    @Nullable
-   public abstract String cloudpanelId();
-
-   @Nullable
    public abstract List<String> ips();
 
-   @SerializedNames({"id", "name", "description", "state", "datacenter", "type", "creation_date", "cloudpanel_id", "ips"})
-   public static Vpn create(String id, String name, String description, GenericState state, DataCenter datacenter, VPNType type, String creationDate, String cloudpanelId, List<String> ips) {
-      return new AutoValue_Vpn(id, name, description, state, datacenter, type, creationDate, cloudpanelId, ips == null ? ImmutableList.<String>of() : ImmutableList.copyOf(ips));
+   @SerializedNames({"id", "name", "description", "state", "datacenter", "type", "creation_date", "ips"})
+   public static Vpn create(String id, String name, String description, GenericState state, DataCenter datacenter, VPNType type, String creationDate, List<String> ips) {
+      return new AutoValue_Vpn(id, name, description, state, datacenter, type, creationDate, ips == null ? ImmutableList.<String>of() : ImmutableList.copyOf(ips));
    }
 
    @AutoValue

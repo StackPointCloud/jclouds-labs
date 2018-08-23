@@ -9,7 +9,6 @@
             "location": "USA",
             "country_code": "US"
         },
-        "cloudpanel_id": "vid35780",
         "size_used": "0.00",
         "cifs_path": "\\vid50995.nas1.lan\\vid50995",
         "nfs_path": "vid50995.nas1.lan/:vid50995",
@@ -33,7 +32,6 @@
             "location": "USA",
             "country_code": "US"
         },
-        "cloudpanel_id": "vid30534",
         "size_used": "0.00",
         "cifs_path": "\\vid50995.nas1.lan\\vid50995",
         "nfs_path": "vid50995.nas1.lan/:vid50995",
@@ -46,7 +44,6 @@
         "size": 250,
         "state": "ACTIVE",
         "description": null,
-        "cloudpanel_id": "vid19857",
         "datacenter": {
             "id": "D0F6D8C8ED29D3036F94C27BBB7BAD36",
             "location": "USA",

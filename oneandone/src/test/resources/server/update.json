@@ -1,8 +1,8 @@
 {
     "id": "D2522497990A9FDCB26CE579524E4024",
-    "cloudpanel_id": "01CFD25",
     "name": "Updatedjava",
     "description": "Updated desc",
+    "server_type":"cloud",
     "datacenter": {
         "id": "908DC2072407C94C8054610AD5A53B8C",
         "country_code": "US",
@@ -45,7 +45,7 @@
             },
             "load_balancers": []
         }],
-    "alerts": [],
+    "alerts": {},
     "monitoring_policy": null,
     "private_networks": null
 }

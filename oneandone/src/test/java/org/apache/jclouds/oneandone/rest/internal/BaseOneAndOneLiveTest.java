@@ -131,7 +131,7 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
       List<Hdd.CreateHdd> hdds = new ArrayList<Hdd.CreateHdd>();
       Hdd.CreateHdd hdd = Hdd.CreateHdd.create(30, Boolean.TRUE);
       hdds.add(hdd);
-      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(4.0, 1.0, 2.0, hdds);
+      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(null, null, 4.0, 1.0, 2.0, hdds);
       return api.serverApi().create(Server.CreateServer.builder()
             .name(serverName)
             .description("testing with jclouds")
@@ -151,6 +151,10 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
    protected void assertNodeAvailable(Server server) {
       assertTrue(waitUntilServerReady.apply(server), String.format("Server %s is not Ready", server));
    }
+   
+    protected void assertBlockStorageAvailable(BlockStorage bs) {
+      assertTrue(waitUntilBlockStorageReady.apply(bs), String.format("BlockStorage %s is not Ready", bs));
+   }
 
    protected void assertNodeRemoved(Server server) {
       assertTrue(waitUntilServerRemoved.apply(server), String.format("Server %s is not Removed", server));
@@ -158,10 +162,6 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
 
    protected void assertServerIPRemoved(ServerIpRef server) {
       assertTrue(waitUntilIServerIPRemoved.apply(server), String.format("IP %s is not Removed", server));
-   }
-
-   protected void assertBlockStorageAvailable(BlockStorage bs) {
-      assertTrue(waitUntilBlockStorageReady.apply(bs), String.format("BlockStorage %s is not Ready", bs));
    }
 
    protected void assertPrivateNetworkAvailable(ServerPrivateNetworkRef ref) {
@@ -177,10 +177,10 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
    }
 
    protected Server turnOnServer(String serverId) {
-      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.SOFTWARE));
+      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.SOFTWARE, false, null));
    }
 
    protected Server turnOFFServer(String serverId) {
-      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE));
+      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE, false, null));
    }
 }

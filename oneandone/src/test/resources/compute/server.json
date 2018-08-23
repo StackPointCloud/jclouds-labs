@@ -1,6 +1,5 @@
 {
     "id": "C68F3BB07BCBE6191F0ACE996AE4F4F5",
-    "cloudpanel_id": "14DD4DD",
     "name": "Docs\/Content Test Server: CentOS 7",
     "description": "",
     "datacenter": {
@@ -8,6 +7,7 @@
         "country_code": "usa",
         "location": "us"
     },
+    "server_type": "cloud",
     "creation_date": "2016-05-05T08:51:48+00:00",
     "first_password": "Wb3MvEJHOv",
     "status": {
@@ -42,7 +42,7 @@
                     "name": "My Load Balancer 1"
                 }]
         }],
-    "alerts": [],
+    "alerts": {},
     "monitoring_policy": null,
     "private_networks": null
 }

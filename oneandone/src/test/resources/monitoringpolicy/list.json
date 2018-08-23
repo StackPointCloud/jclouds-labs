@@ -79,8 +79,7 @@
             }
         },
         "ports": [],
-        "processes": [],
-        "cloudpanel_id": "moFF88C_1"
+        "processes": []
     }
     , {
         "id": "0A5626106ED596E6A86B74E503962CDD",
@@ -167,7 +166,6 @@
                 "process": "httpdeamon",
                 "alert_if": "NOT_RUNNING",
                 "email_notification": false
-            }],
-        "cloudpanel_id": "moFF88C_8"
+            }]
     }
 ]

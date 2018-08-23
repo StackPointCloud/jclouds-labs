@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.jclouds.oneandone.rest.domain.Types.ServerAction;
 import org.apache.jclouds.oneandone.rest.domain.Types.ServerActionMethod;
+import org.apache.jclouds.oneandone.rest.domain.Types.ServerType;
 import org.jclouds.javax.annotation.Nullable;
 import org.jclouds.json.SerializedNames;
 
@@ -31,6 +32,8 @@ public abstract class Server {
    public abstract String id();
 
    public abstract String name();
+
+   public abstract ServerType serverType();
 
    @Nullable
    public abstract Date creationDate();
@@ -42,7 +45,12 @@ public abstract class Server {
    public abstract String description();
 
    @Nullable
+   public abstract String ipv6Range();
 
+   @Nullable
+   public abstract String hostname();
+
+   @Nullable
    public abstract Status status();
 
    @Nullable
@@ -63,17 +71,15 @@ public abstract class Server {
 
    public abstract List<ServerIp> ips();
 
-   public abstract List<Alert> alerts();
-
    @Nullable
    public abstract ServerMonitoringPolicy monitoringPolicy();
 
    public abstract List<ServerPrivateNetwork> privateNetworks();
 
-   @SerializedNames({"id", "name", "creation_date", "first_password", "description", "status", "hardware", "image", "dvd", "snapshot", "datacenter", "ips", "alerts", "monitoring_policy", "private_networks"})
-   public static Server create(String id, String name, Date creationDate, String firstPassword, String description, Status status, Hardware hardware, Image image, Dvd dvd, Snapshot snapshot, DataCenter datacenter, List<ServerIp> ips, List<Alert> alerts, ServerMonitoringPolicy policy, List<ServerPrivateNetwork> privateNetworks) {
-      return new AutoValue_Server(id, name, creationDate, firstPassword, description, status, hardware, image, dvd, snapshot, datacenter,
-              ips == null ? ImmutableList.<ServerIp>of() : ips, alerts == null ? ImmutableList.<Alert>of() : alerts, policy,
+   @SerializedNames({"id", "name", "server_type", "creation_date", "first_password", "description", "ipv6_range", "hostname", "status", "hardware", "image", "dvd", "snapshot", "datacenter", "ips", "monitoring_policy", "private_networks"})
+   public static Server create(String id, String name, ServerType serverType, Date creationDate, String firstPassword, String description, String ipv6Range, String hostname, Status status, Hardware hardware, Image image, Dvd dvd, Snapshot snapshot, DataCenter datacenter, List<ServerIp> ips, ServerMonitoringPolicy policy, List<ServerPrivateNetwork> privateNetworks) {
+      return new AutoValue_Server(id, name, serverType, creationDate, firstPassword, description, ipv6Range, hostname, status, hardware, image, dvd, snapshot, datacenter,
+              ips == null ? ImmutableList.<ServerIp>of() : ips, policy,
               privateNetworks == null ? ImmutableList.<ServerPrivateNetwork>of() : privateNetworks);
    }
 
@@ -156,16 +162,14 @@ public abstract class Server {
 
       public abstract List<String> ips();
 
-      public abstract List<Alert> alerts();
-
       public abstract List<ServerMonitoringPolicy> monitoringPolicy();
 
       public abstract List<ServerPrivateNetwork> privateNetworks();
 
-      @SerializedNames({"id", "name", "creation_date", "first_password", "description", "status", "hardware", "image", "dvd", "snapshot", "datacenter", "ips", "alerts", "monitoring_policy", "private_networks"})
-      public static UpdateServerResponse create(String id, String name, Date creationDate, String firstPassword, String description, Status status, Hardware hardware, Image image, Dvd dvd, Snapshot snapshot, DataCenter datacenter, List<String> ips, List<Alert> alerts, List<ServerMonitoringPolicy> policy, List<ServerPrivateNetwork> privateNetworks) {
+      @SerializedNames({"id", "name", "creation_date", "first_password", "description", "status", "hardware", "image", "dvd", "snapshot", "datacenter", "ips", "monitoring_policy", "private_networks"})
+      public static UpdateServerResponse create(String id, String name, Date creationDate, String firstPassword, String description, Status status, Hardware hardware, Image image, Dvd dvd, Snapshot snapshot, DataCenter datacenter, List<String> ips, List<ServerMonitoringPolicy> policy, List<ServerPrivateNetwork> privateNetworks) {
          return new AutoValue_Server_UpdateServerResponse(id, name, creationDate, firstPassword, description, status, hardware, image, dvd,
-                 snapshot, datacenter, ips == null ? ImmutableList.<String>of() : ips, alerts == null ? ImmutableList.<Alert>of() : alerts,
+                 snapshot, datacenter, ips == null ? ImmutableList.<String>of() : ips,
                  policy == null ? ImmutableList.<ServerMonitoringPolicy>of() : policy, privateNetworks == null ? ImmutableList.<ServerPrivateNetwork>of() : privateNetworks);
       }
    }
@@ -176,6 +180,8 @@ public abstract class Server {
       public abstract String name();
 
       public abstract String description();
+
+      public abstract ServerType serverType();
 
       public abstract Hardware.CreateHardware hardware();
 
@@ -208,13 +214,14 @@ public abstract class Server {
       @Nullable
       public abstract String rsaKey();
 
-      @SerializedNames({"name", "description", "hardware", "appliance_id", "datacenter_id", "password", "region_id", "power_on", "firewall_policy_id", "ip_id", "loadr_balancer_id", "monitoring_policy_id", "rsa_key"})
-      public static CreateServer create(final String name, final String description, final Hardware.CreateHardware hardware, final String applianceId,
+      @SerializedNames({"name", "description", "server_type", "hardware", "appliance_id", "datacenter_id", "password", "region_id", "power_on", "firewall_policy_id", "ip_id", "loadr_balancer_id", "monitoring_policy_id", "rsa_key"})
+      public static CreateServer create(final String name, final String description, final ServerType serverType, final Hardware.CreateHardware hardware, final String applianceId,
               final String dataCenterId, final String password, final String regionId, final Boolean powerOn, final String firewallPolicyId,
               final String ipId, final String loadrBalancerId, final String monitoringPolicyId, final String rsaKey) {
          return builder()
                  .name(name)
                  .description(description)
+                 .serverType(serverType)
                  .hardware(hardware)
                  .applianceId(applianceId)
                  .dataCenterId(dataCenterId)
@@ -239,6 +246,8 @@ public abstract class Server {
          public abstract Builder name(String name);
 
          public abstract Builder description(String description);
+
+         public abstract Builder serverType(ServerType serverType);
 
          public abstract Builder hardware(Hardware.CreateHardware hardware);
 
@@ -273,6 +282,8 @@ public abstract class Server {
 
       public abstract String description();
 
+      public abstract ServerType serverType();
+
       public abstract FixedInstanceHardware hardware();
 
       public abstract String applianceId();
@@ -301,12 +312,13 @@ public abstract class Server {
       @Nullable
       public abstract String monitoringPolicyId();
 
-      @SerializedNames({"name", "description", "hardware", "appliance_id", "datacenter_id", "password", "region_id", "power_on", "firewall_policy_id", "ip_id", "loadr_balancer_id", "monitoring_policy_id"})
-      public static CreateFixedInstanceServer create(String name, String description, FixedInstanceHardware hardware, String applianceId, String dataCenterId, String password,
+      @SerializedNames({"name", "description", "server_type", "hardware", "appliance_id", "datacenter_id", "password", "region_id", "power_on", "firewall_policy_id", "ip_id", "loadr_balancer_id", "monitoring_policy_id"})
+      public static CreateFixedInstanceServer create(String name, String description, final ServerType serverType, FixedInstanceHardware hardware, String applianceId, String dataCenterId, String password,
               String regionId, Boolean powerOn, String firewallPolicyId, String ipId, String loadrBalancerId, String monitoringPolicyId) {
          return builder()
                  .name(name)
                  .description(description)
+                 .serverType(serverType)
                  .hardware(hardware)
                  .applianceId(applianceId)
                  .dataCenterId(dataCenterId)
@@ -330,6 +342,8 @@ public abstract class Server {
          public abstract Builder name(String name);
 
          public abstract Builder description(String description);
+
+         public abstract Builder serverType(ServerType serverType);
 
          public abstract Builder hardware(FixedInstanceHardware hardware);
 
@@ -401,9 +415,14 @@ public abstract class Server {
 
       public abstract ServerActionMethod method();
 
-      @SerializedNames({"action", "method"})
-      public static UpdateStatus create(ServerAction action, ServerActionMethod method) {
-         return new AutoValue_Server_UpdateStatus(action, method);
+      public abstract Boolean recoveryMode();
+
+      @Nullable
+      public abstract String recoveryImageId();
+
+      @SerializedNames({"action", "method", "recovery_image_id", "recovery_mode"})
+      public static UpdateStatus create(ServerAction action, ServerActionMethod method, Boolean recoveryMode, String recoveryImageId) {
+         return new AutoValue_Server_UpdateStatus(action, method, recoveryMode, recoveryImageId);
       }
    }
 }

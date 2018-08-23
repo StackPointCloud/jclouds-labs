@@ -31,7 +31,7 @@
     "hw_version": null,
     "first_password": null,
     "rsa_key": 0,
-    "alerts": [],
+    "alerts": {},
     "alerts_count": [],
     "resize_limits": {
         "vcpu_min": 2,

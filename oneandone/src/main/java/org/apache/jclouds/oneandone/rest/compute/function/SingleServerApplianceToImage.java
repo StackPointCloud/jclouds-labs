@@ -42,7 +42,7 @@ public class SingleServerApplianceToImage implements Function<SingleServerApplia
       OperatingSystem os = OperatingSystem.builder()
               .description(osFamily.value())
               .family(osFamily)
-              .version(parseVersion(from.os()))
+              .version(parseVersion(from.osVersion()))
               .is64Bit(is64Bit(from.osArchitecture()))
               .build();
 

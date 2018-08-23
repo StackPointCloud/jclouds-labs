@@ -104,9 +104,21 @@ public abstract class Image {
       @Nullable
       public abstract String datacenterId();
 
-      @SerializedNames({"server_id", "name", "frequency", "description", "num_images", "datacenter_id"})
+      @Nullable
+      public abstract String source();
+
+      @Nullable
+      public abstract String url();
+
+      @Nullable
+      public abstract String osId();
+
+      @Nullable
+      public abstract String type();
+
+      @SerializedNames({"server_id", "name", "frequency", "description", "num_images", "datacenter_id", "source", "url", "os_id", "type"})
       public static CreateImage create(final String serverId, final String name, final ImageFrequency frequency, final String description, final int numImages,
-              final String dataCenterId) {
+              final String dataCenterId, final String source, String url, String osId, String type) {
          return builder()
                  .name(name)
                  .serverId(serverId)
@@ -114,6 +126,10 @@ public abstract class Image {
                  .datacenterId(dataCenterId)
                  .frequency(frequency)
                  .numImages(numImages)
+                 .source(source)
+                 .url(url)
+                 .osId(osId)
+                 .type(type)
                  .build();
       }
 
@@ -133,6 +149,14 @@ public abstract class Image {
          public abstract Builder description(String description);
 
          public abstract Builder numImages(int numImages);
+
+         public abstract Builder source(String source);
+
+         public abstract Builder url(String url);
+         
+         public abstract Builder osId(String osId);
+         
+         public abstract Builder type(String type);
 
          public abstract Builder datacenterId(String datacenterId);
 

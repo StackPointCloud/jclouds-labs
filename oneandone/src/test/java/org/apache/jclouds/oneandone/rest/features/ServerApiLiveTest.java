@@ -264,7 +264,7 @@ public class ServerApiLiveTest extends BaseOneAndOneLiveTest {
    public void testUpdateStaus() throws InterruptedException {
       assertNodeAvailable(currentServer);
 
-      Server updateResult = serverApi().updateStatus(currentServer.id(), Server.UpdateStatus.create(ServerAction.POWER_OFF, Types.ServerActionMethod.HARDWARE));
+      Server updateResult = serverApi().updateStatus(currentServer.id(), Server.UpdateStatus.create(ServerAction.POWER_OFF, Types.ServerActionMethod.HARDWARE, false, null));
       assertNodeAvailable(currentServer);
 
       assertNotNull(updateResult);

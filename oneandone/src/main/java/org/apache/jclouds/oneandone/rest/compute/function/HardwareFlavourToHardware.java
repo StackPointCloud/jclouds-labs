@@ -53,6 +53,7 @@ public class HardwareFlavourToHardware implements Function<HardwareFlavour, Hard
       }
       final HardwareBuilder builder;
       builder = new HardwareBuilder()
+              //this is flipped intentionally, the API has similiar UUID's for both baremetal and cloud flavors
               .ids(from.id())
               .name(from.name())
               .ram((int) (minRamSize * 1024))

@@ -47,13 +47,13 @@ public class ServerApplianceParser {
       List<Object> dcs = cast(jsonMap.get("available_datacenters"));
       List<Object> categories = cast(jsonMap.get("categories"));
       Class<? extends Object> typeName = dcs.get(0).getClass();
-      List<SingleServerAppliance.AvailableDataCenters> list = new ArrayList<SingleServerAppliance.AvailableDataCenters>();
+      List<String> list = new ArrayList<String>();
       List<String> cats = null;
 
       if (typeName != String.class) {
          for (Object t : dcs) {
             LinkedTreeMap map = (LinkedTreeMap) t;
-            list.add(SingleServerAppliance.AvailableDataCenters.create(map.get("id").toString(), map.get("name").toString()));
+            list.add(t.toString());
          }
          if (categories != null) {
             cats = new ArrayList<String>();
@@ -64,7 +64,7 @@ public class ServerApplianceParser {
 
       } else {
          for (Object t : dcs) {
-            list.add(SingleServerAppliance.AvailableDataCenters.create(t.toString(), ""));
+            list.add(t.toString());
          }
          if (categories != null) {
             cats = new ArrayList<String>();
@@ -81,13 +81,16 @@ public class ServerApplianceParser {
       Types.ApplianceType type = jsonMap.get("type") != null ? Types.ApplianceType.fromValue(jsonMap.get("type").toString()) : null;
       String state = jsonMap.get("state") != null ? jsonMap.get("state").toString() : null;
       String version = jsonMap.get("version") != null ? jsonMap.get("version").toString() : null;
-      String eula_url = jsonMap.get("eula_url") != null ? jsonMap.get("eula_url").toString() : null;
+      String minSizeValue = jsonMap.get("min_hdd_size") != null ? jsonMap.get("min_hdd_size").toString() : null;
+      Integer minSize = 20;
+      if (minSizeValue != null && !"0".equals(minSizeValue)) {
+         minSize = (int) Float.parseFloat(minSizeValue);
+      }
 
       result = SingleServerAppliance.builder().availableDataCenters(list)
               .categories(cats)
-              .eulaUrl(eula_url)
               .id(jsonMap.get("id").toString())
-              .minHddSize((int) Double.parseDouble(jsonMap.get("min_hdd_size").toString()))
+              .minHddSize(minSize)
               .os(os)
               .name(jsonMap.get("name").toString())
               .osArchitecture((int) Double.parseDouble(jsonMap.get("os_architecture").toString()))

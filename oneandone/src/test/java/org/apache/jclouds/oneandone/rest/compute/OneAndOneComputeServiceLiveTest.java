@@ -33,8 +33,9 @@ import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
+
 @Test(groups = "live", singleThreaded = true, testName = "OneAndOneComputeServiceLiveTest")
-public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest  {
 
    public OneAndOneComputeServiceLiveTest() {
       provider = "oneandone";
@@ -82,7 +83,7 @@ public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    @Test
    public void testCreateNodeWithCustomHardware() throws Exception {
       Template template = buildTemplate(templateBuilder()
-              .hardwareId("automatic:cores=2;ram=2048;disk=20").osVersionMatches("14.04").osFamily(OsFamily.UBUNTU));
+              .hardwareId("automatic:cores=2;ram=2048;disk=20").osVersionMatches("7").osFamily(OsFamily.CENTOS));
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
          assertThat(node.getHardware().getRam()).isEqualTo(2048);
@@ -97,7 +98,7 @@ public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    @Test
    public void testCreateNodeWithCustomHardwareUsingMins() throws Exception {
       Template template = buildTemplate(templateBuilder().hardwareId("automatic:cores=1;ram=512;disk=20")
-              .minCores(1).minRam(512).minDisk(20).osVersionMatches("14.04").osFamily(OsFamily.UBUNTU));
+              .minCores(1).minRam(512).minDisk(20).osVersionMatches("7").osFamily(OsFamily.CENTOS));
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
          assertThat(node.getHardware().getRam()).isEqualTo(512);

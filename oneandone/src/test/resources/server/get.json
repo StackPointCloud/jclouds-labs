@@ -1,8 +1,8 @@
 {
     "id": "C68F3BB07BCBE6191F0ACE996AE4F4F5",
-    "cloudpanel_id": "14DD4DD",
     "name": "Docs\/Content Test Server: CentOS 7",
     "description": "",
+    "server_type":"cloud",
     "datacenter": {
         "id": "908DC2072407C94C8054610AD5A53B8C",
         "country_code": "US",
@@ -42,7 +42,7 @@
                     "name": "My Load Balancer 1"
                 }]
         }],
-    "alerts": [],
+    "alerts": {},
     "monitoring_policy": null,
     "private_networks": null
 }

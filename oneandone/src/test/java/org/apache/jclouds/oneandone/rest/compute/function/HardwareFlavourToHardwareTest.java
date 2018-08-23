@@ -47,7 +47,7 @@ public class HardwareFlavourToHardwareTest {
       sourceHdds.add(sourceHdd);
 
       org.apache.jclouds.oneandone.rest.domain.HardwareFlavour.Hardware hrdware = org.apache.jclouds.oneandone.rest.domain.HardwareFlavour.Hardware.create(null, 1, 1, 1, sourceHdds);
-      org.apache.jclouds.oneandone.rest.domain.HardwareFlavour hardware = HardwareFlavour.create("65929629F35BBFBA63022008F773F3EB", "name", hrdware);
+      org.apache.jclouds.oneandone.rest.domain.HardwareFlavour hardware = HardwareFlavour.create("65929629F35BBFBA63022008F773F3EB", "S", hrdware);
 
       Hardware actual = fnHardware.apply(hardware);
 
@@ -62,6 +62,7 @@ public class HardwareFlavourToHardwareTest {
                  .device("hdd")
                  .type(Volume.Type.LOCAL)
                  .size((float) hdd.size())
+                 
                  .build();
          volumes.add(vol);
       }

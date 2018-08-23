@@ -253,7 +253,7 @@ public class Types {
    }
 
    public enum OSImageType {
-      Standard, Minimal, Personal, ISO_OS, ISO_TOOL, NULL, UNRECOGNIZED;
+      STANDARD, MINIMAL, Personal, ISO_OS, ISO_TOOL, NULL, UNRECOGNIZED;
 
       public static OSImageType fromValue(String v) {
          return Enums.getIfPresent(OSImageType.class, v).or(UNRECOGNIZED);
@@ -269,7 +269,7 @@ public class Types {
       public static FirewallRuleAction fromValue(String v) {
          return Enums.getIfPresent(FirewallRuleAction.class, v).or(UNRECOGNIZED);
       }
-      
+
       // the value which is used for matching
       // the json node value with this enum
       private final String value;
@@ -282,5 +282,49 @@ public class Types {
       public String toString() {
          return value;
       }
+   }
+
+   public enum ServerType {
+      CLOUD("cloud"), BAREMETAL("baremetal"), UNRECOGNIZED("");
+
+      public static ServerType fromValue(String v) {
+         return Enums.getIfPresent(ServerType.class, v).or(UNRECOGNIZED);
+      }
+
+      // the value which is used for matching
+      // the json node value with this enum
+      private final String value;
+
+      ServerType(final String type) {
+         value = type;
+      }
+
+      @Override
+      public String toString() {
+         return value;
+      }
+
+   }
+
+   public enum ServerTypeCompatibility {
+      VPS("vps"), CLOUD("cloud"), BAREMETAL("baremetal"), UNRECOGNIZED("");
+
+      public static ServerTypeCompatibility fromValue(String v) {
+         return Enums.getIfPresent(ServerTypeCompatibility.class, v).or(UNRECOGNIZED);
+      }
+
+      // the value which is used for matching
+      // the json node value with this enum
+      private final String value;
+
+      ServerTypeCompatibility(final String type) {
+         value = type;
+      }
+
+      @Override
+      public String toString() {
+         return value;
+      }
+
    }
 }
