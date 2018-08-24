@@ -16,6 +16,7 @@
  */
 package org.apache.jclouds.oneandone.rest.compute.strategy;
 
+import com.google.common.base.Predicate;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import org.apache.jclouds.oneandone.rest.OneAndOneApi;
 import org.apache.jclouds.oneandone.rest.domain.FirewallPolicy;
 import org.apache.jclouds.oneandone.rest.domain.Server;
 import org.apache.jclouds.oneandone.rest.domain.options.GenericQueryOptions;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
@@ -36,10 +38,12 @@ public class CleanupResources {
    protected Logger logger = Logger.NULL;
 
    private final OneAndOneApi api;
+   private final Predicate<Server> waitServerUntilDeleted;
 
    @Inject
-   CleanupResources(OneAndOneApi oneandoneapi) {
+   CleanupResources(OneAndOneApi oneandoneapi, @Named(TIMEOUT_NODE_SUSPENDED) Predicate<Server> waitServerUntilDeleted) {
       this.api = oneandoneapi;
+      this.waitServerUntilDeleted = waitServerUntilDeleted;
    }
 
    public boolean cleanupNode(final String id) {
@@ -69,6 +73,7 @@ public class CleanupResources {
 
    private void deleteServer(Server server) {
       api.serverApi().delete(server.id());
+      waitServerUntilDeleted.apply(server);
    }
 
 }

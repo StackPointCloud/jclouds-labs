@@ -40,6 +40,7 @@ import org.apache.jclouds.oneandone.rest.domain.SingleServerAppliance;
 import org.apache.jclouds.oneandone.rest.domain.Types;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
+import static org.jclouds.compute.config.ComputeServiceProperties.TIMEOUT_NODE_SUSPENDED;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -52,7 +53,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
 import org.jclouds.util.PasswordGenerator;
-
 import static org.jclouds.util.Predicates2.retry;
 
 public class OneAndOneComputeServiceContextModule extends
@@ -123,6 +123,26 @@ public class OneAndOneComputeServiceContextModule extends
          return !((server.status().state() != Types.ServerState.POWERED_OFF
                  && server.status().state() != Types.ServerState.POWERED_ON)
                  || server.status().percent() != 0);
+      }
+   }
+   
+   @Provides
+   @Singleton
+   @Named(TIMEOUT_NODE_SUSPENDED)
+   Predicate<Server> provideServerDeletedPredicate(final OneAndOneApi api, Timeouts timeouts, PollPeriod pollPeriod) {
+      return retry(new ServerDeletedPredicate(api),
+              timeouts.nodeRunning, pollPeriod.pollInitialPeriod, pollPeriod.pollMaxPeriod, TimeUnit.SECONDS);
+   }
+   static class ServerDeletedPredicate implements Predicate<Server> {
+      private final OneAndOneApi api;
+      public ServerDeletedPredicate(OneAndOneApi api) {
+         this.api = checkNotNull(api, "api must not be null");
+      }
+      @Override
+      public boolean apply(Server server) {
+         checkNotNull(server, "Server");
+         Server result = api.serverApi().get(server.id());
+         return result == null;
       }
    }
 }

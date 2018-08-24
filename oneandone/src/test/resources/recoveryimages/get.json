@@ -1,0 +1,14 @@
+{
+    "id": "52670D91E8FB744FB8304B6D6EA1099E",
+    "name": "Linux 64-bit Rescue-System (debian/oldstable)",
+    "os": "Other Linux",
+    "os_family": "Linux",
+    "os_version": "OtherLinux",
+    "os_architecture": 64,
+    "available_datacenters": [
+        "81DEF28500FBC2A973FC0C620DF5B721",
+        "908DC2072407C94C8054610AD5A53B8C",
+        "4EFAD5836CE43ACA502FD5B99BEE44EF",
+        "5091F6D8CBFEF9C26ACE957C652D5D49"
+    ]
+}

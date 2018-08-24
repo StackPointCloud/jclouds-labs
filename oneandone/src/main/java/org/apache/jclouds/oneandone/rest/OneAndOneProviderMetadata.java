@@ -25,6 +25,7 @@ import static org.jclouds.Constants.PROPERTY_MAX_RATE_LIMIT_WAIT;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.compute.config.ComputeServiceProperties.POLL_INITIAL_PERIOD;
 import static org.jclouds.compute.config.ComputeServiceProperties.POLL_MAX_PERIOD;
+import static org.jclouds.compute.config.ComputeServiceProperties.TEMPLATE;
 import org.jclouds.providers.ProviderMetadata;
 import org.jclouds.providers.internal.BaseProviderMetadata;
 
@@ -62,6 +63,7 @@ public class OneAndOneProviderMetadata extends BaseProviderMetadata {
       properties.put(PROPERTY_SO_TIMEOUT, 6000 * 5);
       properties.put(PROPERTY_CONNECTION_TIMEOUT, 60000 * 5);
       properties.put(PROPERTY_MAX_RATE_LIMIT_WAIT, 330000);
+      properties.put(TEMPLATE, "imageNameMatches=Ubuntu,osVersionMatches=1[467]\\.04");
 
       return properties;
    }
