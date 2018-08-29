@@ -30,8 +30,10 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import org.apache.jclouds.oneandone.rest.OneAndOneApi;
+import org.apache.jclouds.oneandone.rest.compute.options.OneandoneTemplateOptions;
 import org.apache.jclouds.oneandone.rest.compute.strategy.CleanupResources;
 import static org.apache.jclouds.oneandone.rest.config.OneAndOneProperties.POLL_PREDICATE_SERVER;
+import org.apache.jclouds.oneandone.rest.domain.BareMetalModel;
 import org.apache.jclouds.oneandone.rest.domain.DataCenter;
 import org.apache.jclouds.oneandone.rest.domain.FirewallPolicy;
 import org.apache.jclouds.oneandone.rest.domain.HardwareFlavour;
@@ -43,9 +45,9 @@ import org.apache.jclouds.oneandone.rest.domain.Types;
 import org.apache.jclouds.oneandone.rest.domain.options.GenericQueryOptions;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import static org.jclouds.compute.util.ComputeServiceUtils.getPortRangesFromList;
@@ -65,6 +67,7 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
    private final OneAndOneApi api;
    private final Predicate<Server> waitServerUntilAvailable;
    private final PasswordGenerator.Config passwordGenerator;
+   PasswordGenerator generate = new PasswordGenerator();
 
    @Inject
    OneandoneComputeServiceAdapter(OneAndOneApi api, CleanupResources cleanupResources,
@@ -78,21 +81,28 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
 
    @Override
    public NodeAndInitialCredentials<Server> createNodeWithGroupEncodedIntoName(String group, String name, Template template) {
+      OneandoneTemplateOptions options = template.getOptions().as(OneandoneTemplateOptions.class);
+      if (Types.ServerType.BAREMETAL.equals(options.serverType)) {
+         return CreateBaremetalServer(group, name, template, options);
+      }
+      return CreateCloudServer(group, name, template, options);
+   }
 
-      final String dataCenterId = template.getLocation().getId();
+   private NodeAndInitialCredentials<Server> CreateCloudServer(String group, String name, Template template, OneandoneTemplateOptions options) {
       Hardware hardware = template.getHardware();
-      TemplateOptions options = template.getOptions();
       Server updateServer = null;
 
+      String dataCenterId = template.getLocation().getId();
       final String loginUser = isNullOrEmpty(options.getLoginUser()) ? "root" : options.getLoginUser();
-      final String password = options.hasLoginPassword() ? options.getLoginPassword() : passwordGenerator.generate();
+      final String password = options.hasLoginPassword() ? options.getLoginPassword() : generate.generate();
       final String privateKey = options.hasLoginPrivateKey() ? options.getPrivateKey() : null;
       final org.jclouds.compute.domain.Image image = template.getImage();
       final int[] inboundPorts = template.getOptions().getInboundPorts();
+      ServerAppliance validImage = getValidCloudImage(image);
 
       //prepare hdds to provision
       List<? extends Volume> volumes = hardware.getVolumes();
-      List<Hdd.CreateHdd> hdds = new ArrayList<Hdd.CreateHdd>();
+      List<Hdd.CreateHdd> hdds = new ArrayList<>();
 
       for (final Volume volume : volumes) {
          try {
@@ -112,6 +122,24 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
          }
       }
 
+      //configuring Firewall rules
+      Map<Integer, Integer> portsRange = getPortRangesFromList(inboundPorts);
+      List<FirewallPolicy.Rule.CreatePayload> rules = new ArrayList<>();
+
+      for (Map.Entry<Integer, Integer> range : portsRange.entrySet()) {
+         FirewallPolicy.Rule.CreatePayload rule = FirewallPolicy.Rule.CreatePayload.builder()
+                 .portFrom(range.getKey())
+                 .portTo(range.getValue())
+                 .protocol(Types.RuleProtocol.TCP)
+                 .build();
+         rules.add(rule);
+      }
+      String firewallPolicyId = "";
+      if (inboundPorts.length > 0) {
+         FirewallPolicy firewallPolicy = api.firewallPolicyApi().create(FirewallPolicy.CreateFirewallPolicy.create(name + " firewall policy", "desc", rules));
+         firewallPolicyId = firewallPolicy.id();
+      }
+
       // provision server
       Server server = null;
       Double cores = ComputeServiceUtils.getCores(hardware);
@@ -124,15 +152,16 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
 
       try {
          org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware hardwareRequest
-                 = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(cores, 1, ram, hdds);
+                 = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(null, null, cores, 1.0, ram, hdds);
          final Server.CreateServer serverRequest = Server.CreateServer.builder()
                  .name(name)
                  .description(name)
                  .hardware(hardwareRequest)
                  .rsaKey(options.getPublicKey())
+                 .firewallPolicyId(firewallPolicyId)
                  .password(privateKey == null ? password : null)
-                 .applianceId(image.getId())
-                 .dataCenterId(dataCenterId)
+                 .applianceId("753E3C1F859874AA74EB63B3302601F5")
+                 .dataCenterId("4EFAD5836CE43ACA502FD5B99BEE44EF")
                  .powerOn(Boolean.TRUE).build();
 
          logger.trace("<< provisioning server '%s'", serverRequest);
@@ -142,23 +171,6 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
          waitServerUntilAvailable.apply(server);
 
          updateServer = api.serverApi().get(server.id());
-
-         Map<Integer, Integer> portsRange = getPortRangesFromList(inboundPorts);
-         List<FirewallPolicy.Rule.CreatePayload> rules = new ArrayList<FirewallPolicy.Rule.CreatePayload>();
-
-         for (Map.Entry<Integer, Integer> range : portsRange.entrySet()) {
-            FirewallPolicy.Rule.CreatePayload rule = FirewallPolicy.Rule.CreatePayload.builder()
-                    .portFrom(range.getKey())
-                    .portTo(range.getValue())
-                    .protocol(Types.RuleProtocol.TCP)
-                    .build();
-            rules.add(rule);
-         }
-         if (inboundPorts.length > 0) {
-            FirewallPolicy rule = api.firewallPolicyApi().create(FirewallPolicy.CreateFirewallPolicy.create(server.name() + " firewall policy", "desc", rules));
-            api.serverApi().addFirewallPolicy(updateServer.id(), updateServer.ips().get(0).id(), rule.id());
-            waitServerUntilAvailable.apply(server);
-         }
 
          logger.trace(">> provisioning complete for server. returned id='%s'", server.id());
 
@@ -179,26 +191,139 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
       return new NodeAndInitialCredentials<Server>(updateServer, updateServer.id(), serverCredentials);
    }
 
+   private NodeAndInitialCredentials<Server> CreateBaremetalServer(String group, String name, Template template, OneandoneTemplateOptions options) {
+      Hardware hardware = template.getHardware();
+      Server updateServer = null;
+
+      final String dataCenterId = template.getLocation().getId();
+      final String loginUser = isNullOrEmpty(options.getLoginUser()) ? "root" : options.getLoginUser();
+      final String password = options.hasLoginPassword() ? options.getLoginPassword() : generate.generate();
+      final String privateKey = options.hasLoginPrivateKey() ? options.getPrivateKey() : null;
+      final org.jclouds.compute.domain.Image image = template.getImage();
+      final int[] inboundPorts = template.getOptions().getInboundPorts();
+      ServerAppliance validImage = getValidBaremetalImage(image);
+      String firewallPolicyId = "";
+
+      Map<Integer, Integer> portsRange = getPortRangesFromList(inboundPorts);
+      List<FirewallPolicy.Rule.CreatePayload> rules = new ArrayList<FirewallPolicy.Rule.CreatePayload>();
+
+      for (Map.Entry<Integer, Integer> range : portsRange.entrySet()) {
+         FirewallPolicy.Rule.CreatePayload rule = FirewallPolicy.Rule.CreatePayload.builder()
+                 .portFrom(range.getKey())
+                 .portTo(range.getValue())
+                 .protocol(Types.RuleProtocol.TCP)
+                 .build();
+         rules.add(rule);
+      }
+      if (inboundPorts.length > 0) {
+         FirewallPolicy rule = api.firewallPolicyApi().create(FirewallPolicy.CreateFirewallPolicy.create(name + " firewall policy", "desc", rules));
+         firewallPolicyId = rule.id();
+      }
+
+      // provision server
+      Server server = null;
+      try {
+         String hardwareId = hardware.getId().split(",")[0];
+         org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware hardwareRequest
+                 = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(hardwareId, null, null, null, null, null);
+         final Server.CreateServer serverRequest = Server.CreateServer.builder()
+                 .name(name)
+                 .description(name)
+                 .hardware(hardwareRequest)
+                 .rsaKey(options.getPublicKey())
+                 .firewallPolicyId(firewallPolicyId)
+                 .password(privateKey == null ? password : null)
+                 .applianceId(validImage.id())
+                 .dataCenterId(dataCenterId)
+                 .serverType(Types.ServerType.BAREMETAL)
+                 .powerOn(Boolean.TRUE).build();
+
+         logger.trace("<< provisioning server '%s'", serverRequest);
+
+         server = api.serverApi().create(serverRequest);
+
+         waitServerUntilAvailable.apply(server);
+
+         updateServer = api.serverApi().get(server.id());
+
+         logger.trace(">> provisioning complete for server. returned id='%s'", server.id());
+
+      } catch (Exception ex) {
+         logger.error(ex, ">> failed to provision server. rollbacking..");
+         if (server != null) {
+            destroyNode(server.id());
+         }
+         throw Throwables.propagate(ex);
+      }
+
+      LoginCredentials serverCredentials = LoginCredentials.builder()
+              .user(loginUser)
+              .password(password)
+              .privateKey(privateKey)
+              .build();
+
+      return new NodeAndInitialCredentials<Server>(updateServer, updateServer.id(), serverCredentials);
+   }
+
+   private ServerAppliance getValidCloudImage(Image image) {
+      //check if image is of Type IMAGE
+      //find a same OS appliance of the correct type
+      List<ServerAppliance> allImages = api.serverApplianceApi().list();
+      for (ServerAppliance app : allImages) {
+         if (app.type() == Types.ApplianceType.IMAGE
+                 && (app.osVersion() == null ? image.getOperatingSystem() == null : app.osVersion().contains(image.getOperatingSystem().getVersion()))
+                 && Integer.toString(app.osArchitecture()).equals(image.getOperatingSystem().getArch())
+                 && app.osImageType() == Types.OSImageType.STANDARD) {
+            return app;
+         }
+      }
+      return null;
+   }
+
+   private ServerAppliance getValidBaremetalImage(Image image) {
+      //check if image is of Type IMAGE
+      //find a same OS appliance of the correct type
+      List<ServerAppliance> allImages = api.serverApplianceApi().list();
+      for (ServerAppliance app : allImages) {
+         if (app.type() == Types.ApplianceType.BAREMETAL
+                 && (app.osVersion() == null ? image.getOperatingSystem() == null : app.osVersion().contains(image.getOperatingSystem().getVersion()))
+                 && Integer.toString(app.osArchitecture()).equals(image.getOperatingSystem().getArch())) {
+            return app;
+         }
+      }
+      return null;
+   }
+
    @Override
    public List<HardwareFlavour> listHardwareProfiles() {
-      return api.serverApi().listHardwareFlavours();
+      List<HardwareFlavour> result = new ArrayList<HardwareFlavour>();
+      List<HardwareFlavour> cloudModels = api.serverApi().listHardwareFlavours();
+      for (HardwareFlavour flavor : cloudModels) {
+         result.add(flavor);
+      }
+      List<BareMetalModel> baremetalModels = api.serverApi().listBaremetalModels();
+      List<HardwareFlavour.Hardware.Hdd> hdds = new ArrayList<HardwareFlavour.Hardware.Hdd>();
+      for (BareMetalModel model : baremetalModels) {
+         for (BareMetalModel.Hardware.Hdd bmHdd : model.hardware().hdds()) {
+            HardwareFlavour.Hardware.Hdd toAdd = HardwareFlavour.Hardware.Hdd.create(bmHdd.unit(), bmHdd.size(), bmHdd.isMain());
+            hdds.add(toAdd);
+         }
+         HardwareFlavour.Hardware hardware = HardwareFlavour.Hardware.create(null, model.hardware().core(), model.hardware().coresPerProcessor(), model.hardware().ram(), hdds);
+         HardwareFlavour flavor = HardwareFlavour.create(model.id(), model.name(), hardware);
+         result.add(flavor);
+      }
+      return result;
    }
 
    @Override
    public Iterable<SingleServerAppliance> listImages() {
-      GenericQueryOptions options = new GenericQueryOptions();
-      options.options(0, 0, null, null, null);
-      List<ServerAppliance> list = api.serverApplianceApi().list(options);
+      List<ServerAppliance> list = api.serverApplianceApi().list();
       List<SingleServerAppliance> results = new ArrayList<SingleServerAppliance>();
       for (ServerAppliance appliance : list) {
-         List<SingleServerAppliance.AvailableDataCenters> availableDatacenters = new ArrayList<SingleServerAppliance.AvailableDataCenters>();
-         for (String dcId : appliance.availableDataCenters()) {
-            availableDatacenters.add(SingleServerAppliance.AvailableDataCenters.create(dcId, ""));
-         }
          results.add(SingleServerAppliance.builder()
                  .id(appliance.id())
                  .name(appliance.name())
-                 .availableDataCenters(availableDatacenters)
+                 .availableDataCenters(appliance.availableDataCenters())
                  .osInstallationBase(appliance.osInstallationBase())
                  .osFamily(appliance.osFamily())
                  .os(appliance.os())
@@ -207,10 +332,10 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
                  .osImageType(appliance.osImageType())
                  .minHddSize(appliance.minHddSize())
                  .type(appliance.type())
+                 .serverTypeCompatibility(appliance.serverTypeCompatibility())
                  .state(appliance.state())
                  .version(appliance.version())
                  .categories(appliance.categories())
-                 .eulaUrl(appliance.eulaUrl())
                  .build());
       }
       return results;
@@ -226,13 +351,13 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
          List<ServerAppliance> list = api.serverApplianceApi().list(options);
          if (list.size() > 0) {
             ServerAppliance appliance = list.get(0);
-            List<SingleServerAppliance.AvailableDataCenters> availableDatacenters = new ArrayList<SingleServerAppliance.AvailableDataCenters>();
+            List<String> availableDatacenters = new ArrayList<String>();
             for (String dcId : appliance.availableDataCenters()) {
-               availableDatacenters.add(SingleServerAppliance.AvailableDataCenters.create(dcId, ""));
+               availableDatacenters.add(dcId);
             }
             SingleServerAppliance image = SingleServerAppliance.create(appliance.id(), appliance.name(), availableDatacenters, appliance.osInstallationBase(),
                     appliance.osFamily(), appliance.os(), appliance.osVersion(), appliance.osArchitecture(), appliance.osImageType(), appliance.minHddSize(),
-                    appliance.type(), appliance.state(), appliance.version(), appliance.categories(), appliance.eulaUrl());
+                    appliance.type(), appliance.state(), appliance.version(), appliance.categories(), appliance.serverTypeCompatibility());
             logger.trace(">> found image [%s].", image.name());
             return image;
          }
@@ -259,19 +384,25 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
 
    @Override
    public void rebootNode(String id) {
+      Server srv = api.serverApi().get(id);
+      if (srv.status().state() == Types.ServerState.DEPLOYING) {
+         return;
+      }
       waitServerUntilAvailable.apply(getNode(id));
-      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.REBOOT, Types.ServerActionMethod.HARDWARE));
+      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.REBOOT, Types.ServerActionMethod.HARDWARE, false, null));
+      waitServerUntilAvailable.apply(getNode(id));
    }
 
    @Override
    public void resumeNode(String id) {
-      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.HARDWARE));
+      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.HARDWARE, false, null));
+      waitServerUntilAvailable.apply(getNode(id));
    }
 
    @Override
    public void suspendNode(String id) {
       waitServerUntilAvailable.apply(getNode(id));
-      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.HARDWARE));
+      api.serverApi().updateStatus(id, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.HARDWARE, false, null));
    }
 
    @Override

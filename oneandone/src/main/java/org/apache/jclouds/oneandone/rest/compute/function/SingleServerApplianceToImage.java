@@ -30,22 +30,23 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 
 public class SingleServerApplianceToImage implements Function<SingleServerAppliance, Image> {
-
+   
    private static final Map<String, OsFamily> OTHER_OS_MAP = ImmutableMap.<String, OsFamily>builder()
            .put("Others", OsFamily.FREEBSD)
            .put("Other", OsFamily.FREEBSD)
            .build();
-
+   
    @Override
    public Image apply(SingleServerAppliance from) {
       OsFamily osFamily = findInStandardFamilies(from.osVersion()).or(findInOtherOSMap(from.osVersion())).or(OsFamily.UNRECOGNIZED);
       OperatingSystem os = OperatingSystem.builder()
               .description(osFamily.value())
               .family(osFamily)
-              .version(parseVersion(from.os()))
+              .version(parseVersion(from.osVersion()))
               .is64Bit(is64Bit(from.osArchitecture()))
+              .arch(is64Bit(from.osArchitecture()) ? "64" : "32")
               .build();
-
+      
       return new ImageBuilder()
               .ids(from.id())
               .name(from.name())
@@ -53,23 +54,23 @@ public class SingleServerApplianceToImage implements Function<SingleServerApplia
               .operatingSystem(os)
               .build();
    }
-
+   
    static String parseVersion(String from) {
       if (from != null) {
          String[] split = from.toLowerCase().split("^\\D*(?=\\d)");
-
+         
          if (split.length >= 2) {
             return split[1];
          }
       }
       return "non";
    }
-
+   
    static boolean is64Bit(int architecture) {
       return architecture != 32;
-
+      
    }
-
+   
    private static Optional<OsFamily> findInStandardFamilies(final String osFamily) {
       if (osFamily == null) {
          return Optional.absent();
@@ -81,7 +82,7 @@ public class SingleServerApplianceToImage implements Function<SingleServerApplia
          }
       });
    }
-
+   
    private static Optional<OsFamily> findInOtherOSMap(final String label) {
       if (label == null) {
          return Optional.absent();

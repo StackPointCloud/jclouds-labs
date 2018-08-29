@@ -68,8 +68,8 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
             Server server = api.serverApi().get(currentServer.id());
 
             if ((server.status().state() != Types.ServerState.POWERED_OFF
-                  && server.status().state() != Types.ServerState.POWERED_ON)
-                  || server.status().percent() != 0) {
+                    && server.status().state() != Types.ServerState.POWERED_ON)
+                    || server.status().percent() != 0) {
                return false;
             } else {
                return true;
@@ -131,15 +131,15 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
       List<Hdd.CreateHdd> hdds = new ArrayList<Hdd.CreateHdd>();
       Hdd.CreateHdd hdd = Hdd.CreateHdd.create(30, Boolean.TRUE);
       hdds.add(hdd);
-      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(4.0, 1.0, 2.0, hdds);
+      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(null, null, 4.0, 1.0, 2.0, hdds);
       return api.serverApi().create(Server.CreateServer.builder()
-            .name(serverName)
-            .description("testing with jclouds")
-            .hardware(hardware)
-            .applianceId("753E3C1F859874AA74EB63B3302601F5")
-            .dataCenterId("908DC2072407C94C8054610AD5A53B8C")
-            .password("Test123!")
-            .powerOn(Boolean.TRUE).build());
+              .name(serverName)
+              .description("testing with jclouds")
+              .hardware(hardware)
+              .applianceId("753E3C1F859874AA74EB63B3302601F5")
+              .dataCenterId("908DC2072407C94C8054610AD5A53B8C")
+              .password("Test123!")
+              .powerOn(Boolean.TRUE).build());
    }
 
    protected Server updateServerStatus(Server server) {
@@ -177,10 +177,10 @@ public class BaseOneAndOneLiveTest extends BaseApiLiveTest<OneAndOneApi> {
    }
 
    protected Server turnOnServer(String serverId) {
-      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.SOFTWARE));
+      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_ON, Types.ServerActionMethod.SOFTWARE, false, null));
    }
 
    protected Server turnOFFServer(String serverId) {
-      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE));
+      return api.serverApi().updateStatus(serverId, Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE, false, null));
    }
 }

@@ -63,7 +63,7 @@ public class OneAndOneProviderMetadata extends BaseProviderMetadata {
       properties.put(PROPERTY_SO_TIMEOUT, 6000 * 5);
       properties.put(PROPERTY_CONNECTION_TIMEOUT, 60000 * 5);
       properties.put(PROPERTY_MAX_RATE_LIMIT_WAIT, 330000);
-      properties.put(TEMPLATE, "imageNameMatches=Ubuntu,osVersionMatches=1[467]\\.04");
+      properties.put(TEMPLATE, "imageNameMatches=Ubuntu,osVersionMatches=1[68]\\.04");
 
       return properties;
    }

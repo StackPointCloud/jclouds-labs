@@ -37,6 +37,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import org.apache.jclouds.oneandone.rest.domain.BareMetalModel;
 import org.apache.jclouds.oneandone.rest.domain.Dvd;
 import org.apache.jclouds.oneandone.rest.domain.Hardware;
 import org.apache.jclouds.oneandone.rest.domain.HardwareFlavour;
@@ -98,6 +99,19 @@ public interface ServerApi extends Closeable {
    @Path("fixed_instance_sizes/{id}")
    @Fallback(Fallbacks.NullOnNotFoundOr404.class)
    HardwareFlavour getHardwareFlavour(@PathParam("id") String flavourId);
+
+   @Named("servers:baremetalModels:list")
+   @GET
+   @Path("/baremetal_models")
+   @Fallback(Fallbacks.EmptyListOnNotFoundOr404.class)
+
+   List<BareMetalModel> listBaremetalModels();
+
+   @Named("servers:baremetalModels:get")
+   @GET
+   @Path("baremetal_models/{id}")
+   @Fallback(Fallbacks.NullOnNotFoundOr404.class)
+   BareMetalModel getBaremetalModel(@PathParam("id") String modelId);
 
    @Named("servers:get")
    @GET

@@ -31,6 +31,7 @@ import org.apache.jclouds.oneandone.rest.compute.function.HardwareFlavourToHardw
 import org.apache.jclouds.oneandone.rest.compute.function.HddToVolume;
 import org.apache.jclouds.oneandone.rest.compute.function.ServerToNodeMetadata;
 import org.apache.jclouds.oneandone.rest.compute.function.SingleServerApplianceToImage;
+import org.apache.jclouds.oneandone.rest.compute.options.OneandoneTemplateOptions;
 import static org.apache.jclouds.oneandone.rest.config.OneAndOneProperties.POLL_PREDICATE_SERVER;
 import org.apache.jclouds.oneandone.rest.domain.DataCenter;
 import org.apache.jclouds.oneandone.rest.domain.HardwareFlavour;
@@ -49,6 +50,7 @@ import org.jclouds.compute.domain.internal.ArbitraryCpuRamTemplateBuilderImpl;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.functions.NodeAndTemplateOptionsToStatement;
 import org.jclouds.compute.functions.NodeAndTemplateOptionsToStatementWithoutPublicKey;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants.PollPeriod;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.domain.Location;
@@ -86,6 +88,8 @@ public class OneAndOneComputeServiceContextModule extends
 
       bind(new TypeLiteral<Function<DataCenter, Location>>() {
       }).to(DataCenterToLocation.class);
+      
+      bind(TemplateOptions.class).to(OneandoneTemplateOptions.class);
    }
    
    @Provides

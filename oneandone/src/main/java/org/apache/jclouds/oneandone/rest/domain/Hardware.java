@@ -28,6 +28,9 @@ public abstract class Hardware {
    @Nullable
    public abstract String fixedInstanceSizeId();
 
+   @Nullable
+   public abstract String baremetalModelId();
+
    public abstract double vcore();
 
    public abstract double coresPerProcessor();
@@ -36,25 +39,35 @@ public abstract class Hardware {
 
    public abstract List<Hdd> hdds();
 
-   @SerializedNames({"fixed_instance_size_id", "vcore", "cores_per_processor", "ram", "hdds"})
-   public static Hardware create(String fixedInstanceSizeId, double vcore, double coresPerProcessor, double ram, List<Hdd> hdds) {
-      return new AutoValue_Hardware(fixedInstanceSizeId, vcore, coresPerProcessor, ram, hdds);
+   @SerializedNames({"fixed_instance_size_id", "baremetal_model_id", "vcore", "cores_per_processor", "ram", "hdds"})
+   public static Hardware create(String fixedInstanceSizeId, String baremetalModelId, double vcore, double coresPerProcessor, double ram, List<Hdd> hdds) {
+      return new AutoValue_Hardware(fixedInstanceSizeId, baremetalModelId, vcore, coresPerProcessor, ram, hdds);
    }
 
    @AutoValue
    public abstract static class CreateHardware {
 
-      public abstract double vcore();
+      @Nullable
+      public abstract String baremetalModelId();
 
-      public abstract double coresPerProcessor();
+      @Nullable
+      public abstract String fixedInstanceSizeId();
 
-      public abstract double ram();
+      @Nullable
+      public abstract Double vcore();
 
+      @Nullable
+      public abstract Double coresPerProcessor();
+
+      @Nullable
+      public abstract Double ram();
+
+      @Nullable
       public abstract List<CreateHdd> hdds();
 
-      @SerializedNames({"vcore", "cores_per_processor", "ram", "hdds"})
-      public static CreateHardware create(double vcore, double coresPerProcessor, double ram, List<CreateHdd> hdds) {
-         return new AutoValue_Hardware_CreateHardware(vcore, coresPerProcessor, ram, hdds);
+      @SerializedNames({"baremetal_model_id", "fixed_instance_size_id", "vcore", "cores_per_processor", "ram", "hdds"})
+      public static CreateHardware create(String baremetalModelId, String fixedInstanceSizeId, Double vcore, Double coresPerProcessor, Double ram, List<CreateHdd> hdds) {
+         return new AutoValue_Hardware_CreateHardware(baremetalModelId, fixedInstanceSizeId, vcore, coresPerProcessor, ram, hdds);
       }
    }
 

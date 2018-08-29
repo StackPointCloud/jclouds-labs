@@ -53,7 +53,7 @@ public class HardwareFlavourToHardwareTest {
 
       int MinRamSize = (int) hardware.hardware().ram();
       if (hardware.hardware().ram() < 1) {
-         MinRamSize = 1;
+         MinRamSize = 1024;
       }
       List<Volume> volumes = new ArrayList<Volume>();
       for (HardwareFlavour.Hardware.Hdd hdd : hardware.hardware().hdds()) {
@@ -71,10 +71,11 @@ public class HardwareFlavourToHardwareTest {
          Processor proc = new Processor(hardware.hardware().coresPerProcessor(), 1);
          processors.add(proc);
       }
-      Hardware expected = new HardwareBuilder()
-              .ids(hardware.id())
+      Hardware expected
+              = new HardwareBuilder()
+              .ids(hardware.id() + "," + hardware.name())
               .name(hardware.name())
-              .ram(MinRamSize)
+              .ram((int) (MinRamSize * 1024))
               .volumes(volumes)
               .processors(ImmutableList.copyOf(processors)).build();
 

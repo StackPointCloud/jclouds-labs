@@ -39,7 +39,7 @@ public class CustomHardwareToHardwareTest {
       Hdd hdd = Hdd.create("hdd", 20, true);
       hdds.add(hdd);
 
-      Hardware hardware = Hardware.create("", 2, 1, 2, hdds);
+      Hardware hardware = Hardware.create(null, "", 2, 1, 2, hdds);
 
       int MinRamSize = (int) hardware.ram();
       if (hardware.ram() < 1) {

@@ -705,10 +705,11 @@ public class ServerApiMockTest extends BaseOneAndOneApiMockTest {
 
       Hdd.CreateHddList hddsRequest = Hdd.CreateHddList.create(hdds);
 
-      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(2.0, 2.0, 2.0, hdds);
+      Hardware.CreateHardware hardware = Hardware.CreateHardware.create(null, null, 2.0, 2.0, 2.0, hdds);
       Server response = serverApi().create(Server.CreateServer.create(
               "My server",
               "My server description",
+              Types.ServerType.CLOUD,
               hardware,
               "applianceId",
               "datacenterId",
@@ -724,7 +725,7 @@ public class ServerApiMockTest extends BaseOneAndOneApiMockTest {
       assertNotNull(response);
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "POST", "/servers",
-              "{\"name\":\"My server\",\"description\":\"My server description\",\"hardware\":{\"vcore\":2.0,\"cores_per_processor\":2.0,\"ram\":2.0,\"hdds\":[{\"size\":50.0,\"is_main\":true}]},\"appliance_id\":\"applianceId\",\"datacenter_id\":\"datacenterId\",\"password\":\"Test123!\",\"power_on\":true}"
+              "{\"name\":\"My server\",\"description\":\"My server description\",\"server_type\":\"cloud\",\"hardware\":{\"vcore\":2.0,\"cores_per_processor\":2.0,\"ram\":2.0,\"hdds\":[{\"size\":50.0,\"is_main\":true}]},\"appliance_id\":\"applianceId\",\"datacenter_id\":\"datacenterId\",\"password\":\"Test123!\",\"power_on\":true}"
       );
    }
 
@@ -735,13 +736,13 @@ public class ServerApiMockTest extends BaseOneAndOneApiMockTest {
       );
       FixedInstanceHardware hardware = FixedInstanceHardware.create("fixedInstanceId");
       Server response = serverApi().createFixedInstanceServer(Server.CreateFixedInstanceServer.create(
-              "name", "name", hardware, "applianceId", "datacenterId", "password",
+              "name", "name", Types.ServerType.CLOUD, hardware, "applianceId", "datacenterId", "password",
               null, Boolean.TRUE, null, null, null, null));
 
       assertNotNull(response);
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "POST", "/servers",
-              "{\"name\":\"name\",\"description\":\"name\",\"hardware\":{\"fixed_instance_size_id\":\"fixedInstanceId\"},\"appliance_id\":\"applianceId\",\"datacenter_id\":\"datacenterId\",\"password\":\"password\",\"power_on\":true}"
+              "{\"name\":\"name\",\"description\":\"name\",\"server_type\":\"cloud\",\"hardware\":{\"fixed_instance_size_id\":\"fixedInstanceId\"},\"appliance_id\":\"applianceId\",\"datacenter_id\":\"datacenterId\",\"password\":\"password\",\"power_on\":true}"
       );
    }
 
@@ -750,15 +751,12 @@ public class ServerApiMockTest extends BaseOneAndOneApiMockTest {
       server.enqueue(
               new MockResponse().setBody(stringFromResource("/server/update.json"))
       );
-      Server response = serverApi().updateStatus("serverId", Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE));
+      Server response = serverApi().updateStatus("serverId", Server.UpdateStatus.create(Types.ServerAction.POWER_OFF, Types.ServerActionMethod.SOFTWARE, false, null));
 
       assertNotNull(response);
       assertEquals(server.getRequestCount(), 1);
       assertSent(server, "PUT", "/servers/serverId/status/action",
-              "{\n"
-              + "  \"action\": \"POWER_OFF\",\n"
-              + "  \"method\": \"SOFTWARE\"\n"
-              + "}"
+              "{\"action\":\"POWER_OFF\",\"method\":\"SOFTWARE\",\"recovery_image_id\":false}"
       );
    }
 

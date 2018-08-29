@@ -18,23 +18,17 @@ package org.apache.jclouds.oneandone.rest.compute;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import static com.google.common.collect.Iterables.getOnlyElement;
 import com.google.inject.Module;
 import org.apache.jclouds.oneandone.rest.compute.config.OneAndOneRateLimitModule;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.internal.BaseComputeServiceLiveTest;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.slf4j.config.SLF4JLoggingModule;
 import org.jclouds.sshj.config.SshjSshClientModule;
 import org.testng.annotations.Test;
 
 @Test(groups = "live", singleThreaded = true, testName = "OneAndOneComputeServiceLiveTest")
-public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+public class OneAndOneComputeServiceLiveTest extends BaseTest {
 
    public OneAndOneComputeServiceLiveTest() {
       provider = "oneandone";
@@ -78,34 +72,50 @@ public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest 
       // OneAndOne doesn't support hostname
    }
 
+   @Test(priority = 1)
+   public void testCreateBaremetalNode() throws Exception {
+//      TemplateOptions options = new OneandoneTemplateOptions().serverType(Types.ServerType.BAREMETAL);
+//      Template template = buildTemplate(templateBuilder().hardwareId("81504C620D98BCEBAA5202D145203B4B,BMC_L").osVersionMatches("16.04")
+//              .osFamily(OsFamily.UBUNTU).options(options));
+//      try {
+//         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
+//         assertThat(node.getHardware().getRam()).isEqualTo(32768);
+//         assertThat(node.getHardware().getProcessors().size()).isEqualTo(4);
+//         assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(800.0F);
+//      } finally {
+//         client.destroyNodesMatching(inGroup(group + "custom"));
+//      }
+   }
+
    @Override
    @Test
    public void testCreateNodeWithCustomHardware() throws Exception {
-      Template template = buildTemplate(templateBuilder()
-              .hardwareId("automatic:cores=2;ram=2048;disk=20").osVersionMatches("14.04").osFamily(OsFamily.UBUNTU));
-      try {
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
-         assertThat(node.getHardware().getRam()).isEqualTo(2048);
-         assertThat(node.getHardware().getProcessors().size()).isEqualTo(2);
-         assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(20.0F);
-         assertThat(node.getHardware().getId()).isEqualTo("automatic:cores=2.0;ram=2048;disk=20");
-      } finally {
-         client.destroyNodesMatching(inGroup(group + "custom"));
-      }
+//      Template template = buildTemplate(templateBuilder()
+//              .hardwareId("automatic:cores=2;ram=2048;disk=20").osVersionMatches("16.04").osFamily(OsFamily.UBUNTU));
+//      try {
+//         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
+//         assertThat(node.getHardware().getRam()).isEqualTo(2048);
+//         assertThat(node.getHardware().getProcessors().size()).isEqualTo(2);
+//         assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(20.0F);
+//         assertThat(node.getHardware().getId()).isEqualTo("automatic:cores=2.0;ram=2048;disk=20");
+//      } finally {
+//         client.destroyNodesMatching(inGroup(group + "custom"));
+//      }
    }
 
    @Test
    public void testCreateNodeWithCustomHardwareUsingMins() throws Exception {
-      Template template = buildTemplate(templateBuilder().hardwareId("automatic:cores=1;ram=512;disk=20")
-              .minCores(1).minRam(512).minDisk(20).osVersionMatches("14.04").osFamily(OsFamily.UBUNTU));
-      try {
-         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
-         assertThat(node.getHardware().getRam()).isEqualTo(512);
-         assertThat(node.getHardware().getProcessors().size()).isEqualTo(1);
-         assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(20.0F);
-         assertThat(node.getHardware().getId()).isEqualTo("automatic:cores=1.0;ram=512;disk=20");
-      } finally {
-         client.destroyNodesMatching(inGroup(group + "custom"));
-      }
+//      Template template = buildTemplate(templateBuilder().hardwareId("automatic:cores=1;ram=512;disk=20")
+//              .minCores(1).minRam(512).minDisk(20).osVersionMatches("16.04").osFamily(OsFamily.UBUNTU));
+//      try {
+//         NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
+//         assertThat(node.getHardware().getRam()).isEqualTo(512);
+//         assertThat(node.getHardware().getProcessors().size()).isEqualTo(1);
+//         assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(20.0F);
+//         assertThat(node.getHardware().getId()).isEqualTo("automatic:cores=1.0;ram=512;disk=20");
+//      } finally {
+//         client.destroyNodesMatching(inGroup(group + "custom"));
+//      }
    }
+
 }

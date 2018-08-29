@@ -119,7 +119,7 @@ public class ServerToNodeMetadataTest extends BaseOneAndOneApiMockTest {
       options.options(0, 0, null, "B5F778B85C041347BCDCFC3172AB3F3C", null);
       List<ServerAppliance> appliances = new ArrayList<ServerAppliance>();
       ServerAppliance appliance = ServerAppliance.create("B5F778B85C041347BCDCFC3172AB3F3C", "name", null, "empty", Types.OSFamliyType.Linux, "ubuntu",
-              "Ubuntu14.04", 64, Types.OSImageType.Minimal, 20, Types.ApplianceType.IMAGE, null, null, null, null);
+              "Ubuntu14.04", 64, Types.OSImageType.MINIMAL, 20, Types.ApplianceType.IMAGE, null, null, null, null);
       appliances.add(appliance);
       List<HardwareFlavour.Hardware.Hdd> hdds = new ArrayList<HardwareFlavour.Hardware.Hdd>();
       HardwareFlavour.Hardware.Hdd hdd = HardwareFlavour.Hardware.Hdd.create("GB", 30, true);

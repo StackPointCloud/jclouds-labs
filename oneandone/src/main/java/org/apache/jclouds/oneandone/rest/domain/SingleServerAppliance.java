@@ -30,7 +30,7 @@ public abstract class SingleServerAppliance {
    public abstract String name();
 
    @Nullable
-   public abstract List<AvailableDataCenters> availableDataCenters();
+   public abstract List<String> availableDataCenters();
 
    @Nullable
    public abstract String osInstallationBase();
@@ -48,8 +48,9 @@ public abstract class SingleServerAppliance {
 
    @Nullable
    public abstract Types.OSImageType osImageType();
-
-   public abstract int minHddSize();
+   
+   @Nullable
+   public abstract Integer minHddSize();
 
    @Nullable
    public abstract Types.ApplianceType type();
@@ -64,16 +65,16 @@ public abstract class SingleServerAppliance {
    public abstract List<String> categories();
 
    @Nullable
-   public abstract String eulaUrl();
+   public abstract List<String> serverTypeCompatibility();
 
    @SerializedNames({"id", "name", "available_datacenters", "os_installation_base", "os_family", "os", "os_version", "os_architecture", "os_image_type",
-      "min_hdd_size", "type", "state", "version", "categories", "eula_url"})
-   public static SingleServerAppliance create(String id, String name, List<AvailableDataCenters> availableDataCenters, String osInstallationBase, Types.OSFamliyType osFamily, String os,
-           String osVersion, int osArchitecture, Types.OSImageType osImageType, int minHddSize, Types.ApplianceType type, String state, String version, List<String> categories, String eulaUrl) {
+      "min_hdd_size", "type", "state", "version", "categories", "server_type_compatibility"})
+   public static SingleServerAppliance create(String id, String name, List<String> availableDataCenters, String osInstallationBase, Types.OSFamliyType osFamily, String os,
+           String osVersion, int osArchitecture, Types.OSImageType osImageType, Integer minHddSize, Types.ApplianceType type, String state, String version, List<String> categories, List<String> serverTypeCompatibility) {
       return builder()
               .id(id)
               .name(name)
-              .availableDataCenters(availableDataCenters == null ? ImmutableList.<AvailableDataCenters>of() : ImmutableList.copyOf(availableDataCenters))
+              .availableDataCenters(availableDataCenters == null ? ImmutableList.<String>of() : ImmutableList.copyOf(availableDataCenters))
               .osInstallationBase(osInstallationBase)
               .osFamily(osFamily)
               .os(os)
@@ -85,7 +86,7 @@ public abstract class SingleServerAppliance {
               .state(state)
               .version(version)
               .categories(categories == null ? ImmutableList.<String>of() : ImmutableList.copyOf(categories))
-              .eulaUrl(eulaUrl)
+              .serverTypeCompatibility(serverTypeCompatibility == null ? ImmutableList.<String>of() : ImmutableList.copyOf(serverTypeCompatibility))
               .build();
    }
 
@@ -100,7 +101,7 @@ public abstract class SingleServerAppliance {
 
       public abstract Builder name(String name);
 
-      public abstract Builder availableDataCenters(List<AvailableDataCenters> availableDataCenters);
+      public abstract Builder availableDataCenters(List<String> availableDataCenters);
 
       public abstract Builder osInstallationBase(String osInstallationBase);
 
@@ -114,7 +115,7 @@ public abstract class SingleServerAppliance {
 
       public abstract Builder osImageType(Types.OSImageType osImageType);
 
-      public abstract Builder minHddSize(int minHddSize);
+      public abstract Builder minHddSize(Integer minHddSize);
 
       public abstract Builder type(Types.ApplianceType type);
 
@@ -124,11 +125,11 @@ public abstract class SingleServerAppliance {
 
       public abstract Builder categories(List<String> categories);
 
-      public abstract Builder eulaUrl(String eulaUrl);
+      public abstract Builder serverTypeCompatibility(List<String> serverTypeCompatibility);
 
       abstract List<String> categories();
 
-      abstract List<AvailableDataCenters> availableDataCenters();
+      abstract List<String> availableDataCenters();
 
       abstract SingleServerAppliance autoBuild();
 
@@ -136,19 +137,6 @@ public abstract class SingleServerAppliance {
          availableDataCenters(availableDataCenters() != null ? ImmutableList.copyOf(availableDataCenters()) : null);
          categories(categories() != null ? ImmutableList.copyOf(categories()) : null);
          return autoBuild();
-      }
-   }
-
-   @AutoValue
-   public abstract static class AvailableDataCenters {
-
-      public abstract String id();
-
-      public abstract String name();
-
-      @SerializedNames({"id", "name"})
-      public static AvailableDataCenters create(String id, String name) {
-         return new AutoValue_SingleServerAppliance_AvailableDataCenters(id, name);
       }
    }
 }

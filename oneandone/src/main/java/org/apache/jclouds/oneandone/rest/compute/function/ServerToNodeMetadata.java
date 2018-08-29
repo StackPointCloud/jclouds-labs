@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.jclouds.oneandone.rest.OneAndOneApi;
+import org.apache.jclouds.oneandone.rest.domain.BareMetalModel;
 import org.apache.jclouds.oneandone.rest.domain.DataCenter;
+import org.apache.jclouds.oneandone.rest.domain.HardwareFlavour;
 import org.apache.jclouds.oneandone.rest.domain.Hdd;
 import org.apache.jclouds.oneandone.rest.domain.Server;
 import org.apache.jclouds.oneandone.rest.domain.ServerIp;
@@ -83,9 +85,15 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Location location = find(locations.get(), idEquals(dataCenter.id()));
       Hardware hardware = null;
       //check if the server was built on a hardware flavour(Fixed instance)
-      if (server.hardware().fixedInstanceSizeId() != null && !"0".equals(server.hardware().fixedInstanceSizeId())) {
-         hardware = hardwareFlavors.get().get(server.hardware().fixedInstanceSizeId());
+      if (server.hardware().fixedInstanceSizeId() != null) {
+         //we need this call to get the name of the flavor in order to fetch it from the hardwareFlavours list, the id is a combination of id+,+name
+         HardwareFlavour flavor = api.serverApi().getHardwareFlavour(server.hardware().fixedInstanceSizeId());
+         hardware = hardwareFlavors.get().get(flavor.id() + "," + flavor.name());
 
+      } else if (server.hardware().baremetalModelId() != null) {
+         //we need this call to get the name of the flavor in order to fetch it from the hardwareFlavours list, the id is a combination of id+,+name
+         BareMetalModel bmModel = api.serverApi().getBaremetalModel(server.hardware().baremetalModelId());
+         hardware = hardwareFlavors.get().get(bmModel.id() + "," + bmModel.name());
       } else {
          List<Volume> volumes = Lists.newArrayList();
          //customer hardware
@@ -140,7 +148,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
               .backendStatus(server.status().state().toString())
               .status(mapStatus(server.status().state()))
               .hardware(hardware)
-              .operatingSystem(image.getOperatingSystem())
+              .operatingSystem(image != null ? image.getOperatingSystem() : null)
               .location(location)
               .privateAddresses(Iterables.filter(addresses, InetAddresses2.IsPrivateIPAddress.INSTANCE))
               .publicAddresses(Iterables.filter(addresses, not(InetAddresses2.IsPrivateIPAddress.INSTANCE)));

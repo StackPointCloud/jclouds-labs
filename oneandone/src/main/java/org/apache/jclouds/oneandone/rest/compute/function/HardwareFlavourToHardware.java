@@ -28,7 +28,7 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.VolumeBuilder;
 
 public class HardwareFlavourToHardware implements Function<HardwareFlavour, Hardware> {
-
+   
    @Override
    public Hardware apply(HardwareFlavour from) {
       double minRamSize = (int) from.hardware().ram();
@@ -45,7 +45,7 @@ public class HardwareFlavourToHardware implements Function<HardwareFlavour, Hard
                  .build();
          volumes.add(vol);
       }
-
+      
       List<Processor> processors = new ArrayList<Processor>();
       for (int i = 0; i < from.hardware().coresPerProcessor(); i++) {
          Processor proc = new Processor(from.hardware().vcore(), 1d);
@@ -53,12 +53,12 @@ public class HardwareFlavourToHardware implements Function<HardwareFlavour, Hard
       }
       final HardwareBuilder builder;
       builder = new HardwareBuilder()
-              .ids(from.id())
+              .ids(from.id() + "," + from.name())
               .name(from.name())
               .ram((int) (minRamSize * 1024))
               .volumes(volumes)
               .processors(ImmutableList.copyOf(processors));
       return builder.build();
    }
-
+   
 }
