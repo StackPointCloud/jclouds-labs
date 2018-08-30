@@ -109,9 +109,8 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
             //check if the bootable device has enough size to run the appliance(image).
             float minHddSize = volume.getSize();
             if (volume.isBootDevice()) {
-               SingleServerAppliance appliance = api.serverApplianceApi().get(image.getId());
-               if (appliance.minHddSize() > volume.getSize()) {
-                  minHddSize = appliance.minHddSize();
+               if (validImage.minHddSize() > volume.getSize()) {
+                  minHddSize = validImage.minHddSize();
                }
             }
             Hdd.CreateHdd hdd = Hdd.CreateHdd.create(minHddSize, volume.isBootDevice());
@@ -151,8 +150,15 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
       }
 
       try {
-         org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware hardwareRequest
-                 = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(null, null, cores, 1.0, ram, hdds);
+         org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware hardwareRequest = null;
+         if (hardware.getId() != null) {
+            String hardwareId = hardware.getId().split(",")[0];
+            hardwareRequest = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(null, hardwareId, null, null, null, null);
+         } else {
+            hardwareRequest
+                    = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(null, null, cores, 1.0, ram, hdds);
+         }
+
          final Server.CreateServer serverRequest = Server.CreateServer.builder()
                  .name(name)
                  .description(name)
@@ -160,8 +166,8 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
                  .rsaKey(options.getPublicKey())
                  .firewallPolicyId(firewallPolicyId)
                  .password(privateKey == null ? password : null)
-                 .applianceId("753E3C1F859874AA74EB63B3302601F5")
-                 .dataCenterId("4EFAD5836CE43ACA502FD5B99BEE44EF")
+                 .applianceId(validImage.id())
+                 .dataCenterId(dataCenterId)
                  .powerOn(Boolean.TRUE).build();
 
          logger.trace("<< provisioning server '%s'", serverRequest);
@@ -273,7 +279,7 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
          if (app.type() == Types.ApplianceType.IMAGE
                  && (app.osVersion() == null ? image.getOperatingSystem() == null : app.osVersion().contains(image.getOperatingSystem().getVersion()))
                  && Integer.toString(app.osArchitecture()).equals(image.getOperatingSystem().getArch())
-                 && app.osImageType() == Types.OSImageType.STANDARD) {
+                 && (app.osImageType() == Types.OSImageType.STANDARD || app.osImageType() == Types.OSImageType.MINIMAL)) {
             return app;
          }
       }
