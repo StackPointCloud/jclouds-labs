@@ -38,12 +38,12 @@ public class CleanupResources {
    protected Logger logger = Logger.NULL;
 
    private final OneAndOneApi api;
-   private final Predicate<Server> serverDeletePredicate ;
+   private final Predicate<Server> serverDeletePredicate;
 
    @Inject
-   CleanupResources(OneAndOneApi oneandoneapi, @Named(TIMEOUT_NODE_SUSPENDED) Predicate<Server> serverDeletePredicate ) {
+   CleanupResources(OneAndOneApi oneandoneapi, @Named(TIMEOUT_NODE_SUSPENDED) Predicate<Server> serverDeletePredicate) {
       this.api = oneandoneapi;
-      this.serverDeletePredicate  = serverDeletePredicate;
+      this.serverDeletePredicate = serverDeletePredicate;
    }
 
    public boolean cleanupNode(final String id) {
@@ -73,7 +73,7 @@ public class CleanupResources {
 
    private void deleteServer(Server server) {
       api.serverApi().delete(server.id());
-      serverDeletePredicate .apply(server);
+      serverDeletePredicate.apply(server);
    }
 
 }
