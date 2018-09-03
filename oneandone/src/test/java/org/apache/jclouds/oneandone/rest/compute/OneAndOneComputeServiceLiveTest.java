@@ -81,7 +81,7 @@ public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest 
       // OneAndOne doesn't support hostname
    }
 
-   @Test(priority = 1)
+   @Test
    public void testCreateBaremetalNode() throws Exception {
       TemplateOptions options = new OneandoneTemplateOptions().serverType(Types.ServerType.BAREMETAL);
       Template template = buildTemplate(templateBuilder().locationId("908DC2072407C94C8054610AD5A53B8C").hardwareId("81504C620D98BCEBAA5202D145203B4B,BMC_L").osFamily(OsFamily.CENTOS).osVersionMatches("7")
