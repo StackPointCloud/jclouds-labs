@@ -151,7 +151,7 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
 
       try {
          org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware hardwareRequest = null;
-         if (hardware.getId() != null) {
+         if (hardware.getId() != null && !hardware.getId().contains("automatic")) {
             String hardwareId = hardware.getId().split(",")[0];
             hardwareRequest = org.apache.jclouds.oneandone.rest.domain.Hardware.CreateHardware.create(null, hardwareId, null, null, null, null);
          } else {
@@ -240,7 +240,6 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
                  .firewallPolicyId(firewallPolicyId)
                  .password(privateKey == null ? password : null)
                  .applianceId(validImage.id())
-                 .dataCenterId(dataCenterId)
                  .serverType(Types.ServerType.BAREMETAL)
                  .powerOn(Boolean.TRUE).build();
 
@@ -289,7 +288,8 @@ public class OneandoneComputeServiceAdapter implements ComputeServiceAdapter<Ser
    private ServerAppliance getValidBaremetalImage(Image image) {
       //check if image is of Type IMAGE
       //find a same OS appliance of the correct type
-      List<ServerAppliance> allImages = api.serverApplianceApi().list();
+      GenericQueryOptions ops = new GenericQueryOptions().options(0, 0, null, "baremetal", null);
+      List<ServerAppliance> allImages = api.serverApplianceApi().list(ops);
       for (ServerAppliance app : allImages) {
          if (app.type() == Types.ApplianceType.BAREMETAL
                  && (app.osVersion() == null ? image.getOperatingSystem() == null : app.osVersion().contains(image.getOperatingSystem().getVersion()))

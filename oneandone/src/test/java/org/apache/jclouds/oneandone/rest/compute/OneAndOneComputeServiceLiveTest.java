@@ -84,12 +84,12 @@ public class OneAndOneComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    @Test(priority = 1)
    public void testCreateBaremetalNode() throws Exception {
       TemplateOptions options = new OneandoneTemplateOptions().serverType(Types.ServerType.BAREMETAL);
-      Template template = buildTemplate(templateBuilder().hardwareId("81504C620D98BCEBAA5202D145203B4B,BMC_L").osVersionMatches("16.04")
-              .osFamily(OsFamily.UBUNTU).options(options));
+      Template template = buildTemplate(templateBuilder().locationId("908DC2072407C94C8054610AD5A53B8C").hardwareId("81504C620D98BCEBAA5202D145203B4B,BMC_L").osFamily(OsFamily.CENTOS).osVersionMatches("7")
+              .options(options));
       try {
          NodeMetadata node = getOnlyElement(client.createNodesInGroup(group + "custom", 1, template));
          assertThat(node.getHardware().getRam()).isEqualTo(32768);
-         assertThat(node.getHardware().getProcessors().size()).isEqualTo(2);
+         assertThat(node.getHardware().getProcessors().size()).isEqualTo(4);
          assertThat(node.getHardware().getVolumes().get(0).getSize()).isEqualTo(800.0F);
       } finally {
          client.destroyNodesMatching(inGroup(group + "custom"));
